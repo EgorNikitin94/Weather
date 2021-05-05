@@ -8,8 +8,10 @@
 import UIKit
 import SnapKit
 
-final class GeolocationAskViewController: UIViewController {
+final class OnboardingViewController: UIViewController {
 
+    var coordinator: OnboardingCoordinator?
+    
     private lazy var womanWithUmbrellaImageView: UIImageView = {
         $0.image = UIImage(named: "WomanUmbrella")
         $0.contentMode = .scaleAspectFit
@@ -52,16 +54,19 @@ final class GeolocationAskViewController: UIViewController {
     }(UILabel())
     
     private lazy var useMyGeolocationButton: UIButton = {
-        $0.layer.backgroundColor = AppColors.shared.orange
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 10
+        $0.setBackgroundColor(AppColors.sharedInstance.orangeButton, forState: .normal)
+        $0.setBackgroundColor(AppColors.sharedInstance.selectedColorButton, forState: .selected)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.05
         let title = NSMutableAttributedString(string: "ИСПОЛЬЗОВАТЬ МЕСТОПОЛОЖЕНИЕ  УСТРОЙСТВА", attributes: [NSAttributedString.Key.kern: -0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: UIFont(name: "Rubik-Regular", size: 12) as Any, NSAttributedString.Key.foregroundColor: UIColor(red: 1, green: 1, blue: 1, alpha: 1)])
         $0.setAttributedTitle(title, for: .normal)
-        $0.layer.cornerRadius = 10
+        $0.addTarget(self, action: #selector(agreeUseGeolocation), for: .touchUpInside)
         return $0
     }(UIButton())
     
-    private lazy var doNotUseMyGeolocationButton: UILabel = {
+    private lazy var doNotUseMyGeolocationLabel: UILabel = {
         $0.textColor = UIColor(red: 0.992, green: 0.986, blue: 0.963, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
@@ -70,13 +75,36 @@ final class GeolocationAskViewController: UIViewController {
         // (identical to box height)
         $0.textAlignment = .right
         $0.attributedText = NSMutableAttributedString(string: "НЕТ, Я БУДУ ДОБАВЛЯТЬ ЛОКАЦИИ", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doNotAgreeUseGeolocation))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGestureRecognizer)
         return $0
     }(UILabel())
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.isHidden = true
+        view.backgroundColor = AppColors.sharedInstance.accentBlue
         setupLayout()
+        LocationManager.sharedInstance.requestAuthorization()
+    }
+    
+    @objc private func agreeUseGeolocation() {
+        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
+        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+        if LocationManager.sharedInstance.checkAuthorizationStatus() {
+            coordinator?.pushWeatherMainViewController()
+        } else {
+            coordinator?.showAlert()
+        }
+        
+    }
+    
+    @objc private func doNotAgreeUseGeolocation() {
+        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
+        UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+        coordinator?.pushWeatherMainViewController()
     }
     
     private func setupLayout() {
@@ -86,7 +114,7 @@ final class GeolocationAskViewController: UIViewController {
         view.addSubview(descriptionLabel)
         view.addSubview(changeSelectionLabel)
         view.addSubview(useMyGeolocationButton)
-        view.addSubview(doNotUseMyGeolocationButton)
+        view.addSubview(doNotUseMyGeolocationLabel)
 
         womanWithUmbrellaImageView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(62)
@@ -113,13 +141,13 @@ final class GeolocationAskViewController: UIViewController {
         }
 
         useMyGeolocationButton.snp.makeConstraints { (make) in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(40)
+            make.top.equalTo(changeSelectionLabel.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(18)
             make.trailing.equalToSuperview().offset(-17)
             make.height.equalTo(40)
         }
 
-        doNotUseMyGeolocationButton.snp.makeConstraints { (make) in
+        doNotUseMyGeolocationLabel.snp.makeConstraints { (make) in
             make.top.equalTo(useMyGeolocationButton.snp.bottom).offset(25)
             make.trailing.equalToSuperview().offset(-17)
             make.bottom.equalToSuperview().offset(-77)
