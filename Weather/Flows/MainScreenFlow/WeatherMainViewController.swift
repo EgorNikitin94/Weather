@@ -18,7 +18,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func openSettings() {
-        print("SettingsButton")
+        coordinator?.pushSettingsViewController()
     }
     
     @objc private func addCity() {

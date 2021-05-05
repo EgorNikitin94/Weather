@@ -8,13 +8,124 @@
 import UIKit
 
 final class SettingsView: UIView {
-
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    
+    var onSetupButtonTapped: (() -> Void)?
+    
+    private lazy var settingsLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.153, green: 0.153, blue: 0.133, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Medium", size: 18)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 0.7
+        $0.attributedText = NSMutableAttributedString(string: "Настройки", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var temperatureLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.538, green: 0.513, blue: 0.513, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Regular", size: 16)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        $0.attributedText = NSMutableAttributedString(string: "Температура", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var windSpeedLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.538, green: 0.513, blue: 0.513, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Regular", size: 16)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        $0.attributedText = NSMutableAttributedString(string: "Скорость ветра", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var timeFormatLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.538, green: 0.513, blue: 0.513, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Regular", size: 16)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        $0.attributedText = NSMutableAttributedString(string: "Формат времени", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var notificationLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.538, green: 0.513, blue: 0.513, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Regular", size: 16)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        $0.attributedText = NSMutableAttributedString(string: "Уведомления", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var setupButton: UIButton = {
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 10
+        $0.setBackgroundColor(AppColors.sharedInstance.orangeButton, forState: .normal)
+        $0.setBackgroundColor(AppColors.sharedInstance.selectedColorButton, forState: .selected)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        let title = NSMutableAttributedString(string: "Установить", attributes: [NSAttributedString.Key.kern: -0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: UIFont(name: "Rubik-Regular", size: 16) as Any, NSAttributedString.Key.foregroundColor: UIColor(red: 1, green: 1, blue: 1, alpha: 1)])
+        $0.setAttributedTitle(title, for: .normal)
+        $0.addTarget(self, action: #selector(setupButtonTapped), for: .touchUpInside)
+        return $0
+    }(UIButton())
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = AppColors.sharedInstance.accentLightBlue
+        setupLayout()
     }
-    */
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc private func setupButtonTapped() {
+            onSetupButtonTapped?()
+    }
+    
+    private func setupLayout() {
+        self.addSubview(settingsLabel)
+        self.addSubview(temperatureLabel)
+        self.addSubview(windSpeedLabel)
+        self.addSubview(timeFormatLabel)
+        self.addSubview(notificationLabel)
+        self.addSubview(setupButton)
+//        self.addSubview()
+//        self.addSubview()
+//        self.addSubview()
+//        self.addSubview()
+        
+        settingsLabel.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().offset(27)
+            make.leading.equalToSuperview().offset(20)
+        }
+        
+        temperatureLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(settingsLabel.snp.bottom).offset(20)
+            make.leading.equalTo(settingsLabel.snp.leading)
+        }
+        
+        windSpeedLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(temperatureLabel.snp.bottom).offset(20)
+            make.leading.equalTo(settingsLabel.snp.leading)
+        }
+        
+        timeFormatLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(windSpeedLabel.snp.bottom).offset(30)
+            make.leading.equalTo(settingsLabel.snp.leading)
+        }
+        
+        notificationLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(timeFormatLabel.snp.bottom).offset(30)
+            make.leading.equalTo(settingsLabel.snp.leading)
+        }
+        
+        setupButton.snp.makeConstraints { (make) in
+            make.leading.equalToSuperview().offset(35)
+            make.trailing.equalToSuperview().offset(-35)
+            make.bottom.equalToSuperview().offset(-16)
+            make.height.equalTo(40)
+        }
+    }
+    
 }

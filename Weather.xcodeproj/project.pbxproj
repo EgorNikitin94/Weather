@@ -17,6 +17,7 @@
 		5094E3C22642E99E00140AD2 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5094E3C12642E99E00140AD2 /* SettingsViewController.swift */; };
 		5094E3C52642E9BF00140AD2 /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5094E3C42642E9BF00140AD2 /* SettingsCoordinator.swift */; };
 		5094E3C82642F04800140AD2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5094E3C72642F04800140AD2 /* SettingsView.swift */; };
+		5094E3CC2643252B00140AD2 /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */; };
 		50DC4AEC264188F400F2FAE8 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DC4AEB264188F400F2FAE8 /* LocationManager.swift */; };
 		50DC4AF82641B7E900F2FAE8 /* WeatherMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DC4AF72641B7E900F2FAE8 /* WeatherMainViewController.swift */; };
 		50DC4AFB2641B83400F2FAE8 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DC4AFA2641B83400F2FAE8 /* NetworkService.swift */; };
@@ -41,6 +42,7 @@
 		5094E3C12642E99E00140AD2 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		5094E3C42642E9BF00140AD2 /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		5094E3C72642F04800140AD2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Medium.ttf"; sourceTree = "<group>"; };
 		50DC4AEB264188F400F2FAE8 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		50DC4AF72641B7E900F2FAE8 /* WeatherMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMainViewController.swift; sourceTree = "<group>"; };
 		50DC4AFA2641B83400F2FAE8 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				50E29CEA2640411500066B93 /* Rubik-Regular.ttf */,
+				5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				50E29CD42640067400066B93 /* LaunchScreen.storyboard in Resources */,
 				50E29CEB2640419300066B93 /* Rubik-Regular.ttf in Resources */,
 				50E29CD12640067400066B93 /* Assets.xcassets in Resources */,
+				5094E3CC2643252B00140AD2 /* Rubik-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
