@@ -40,6 +40,21 @@ final class SettingsViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         view.backgroundColor = AppColors.sharedInstance.accentBlue
         setupLayout()
+        onSetupButtonTapped()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
+    }
+
+    
+    private func onSetupButtonTapped() {
+        if let settingsCoordinator = coordinator {
+            settingsView.onSetupButtonTapped = {
+                settingsCoordinator.popToWeatherMainViewController()
+            }
+        }
     }
     
     private func setupLayout() {

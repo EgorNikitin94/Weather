@@ -69,6 +69,14 @@ final class SettingsView: UIView {
         return $0
     }(UIButton())
     
+    private let temperatureSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "C", rightSideText: "F", userDefaultsKey: UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue)
+    
+    private let windSpeedSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "MI", rightSideText: "Km", userDefaultsKey: UserDefaultsKeys.isMiChosenBoolKey.rawValue)
+    
+    private let timeFormatSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "12", rightSideText: "24", userDefaultsKey: UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue)
+    
+    private let notificationSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "On", rightSideText: "Off", userDefaultsKey: UserDefaultsKeys.isNotifyBoolKey.rawValue)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = AppColors.sharedInstance.accentLightBlue
@@ -83,6 +91,18 @@ final class SettingsView: UIView {
             onSetupButtonTapped?()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        temperatureSegmentedControl.layer.cornerRadius = 5
+        temperatureSegmentedControl.clipsToBounds = true
+        windSpeedSegmentedControl.layer.cornerRadius = 5
+        windSpeedSegmentedControl.clipsToBounds = true
+        timeFormatSegmentedControl.layer.cornerRadius = 5
+        timeFormatSegmentedControl.clipsToBounds = true
+        notificationSegmentedControl.layer.cornerRadius = 5
+        notificationSegmentedControl.clipsToBounds = true
+    }
+    
     private func setupLayout() {
         self.addSubview(settingsLabel)
         self.addSubview(temperatureLabel)
@@ -90,10 +110,10 @@ final class SettingsView: UIView {
         self.addSubview(timeFormatLabel)
         self.addSubview(notificationLabel)
         self.addSubview(setupButton)
-//        self.addSubview()
-//        self.addSubview()
-//        self.addSubview()
-//        self.addSubview()
+        self.addSubview(temperatureSegmentedControl)
+        self.addSubview(windSpeedSegmentedControl)
+        self.addSubview(timeFormatSegmentedControl)
+        self.addSubview(notificationSegmentedControl)
         
         settingsLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(27)
@@ -106,7 +126,7 @@ final class SettingsView: UIView {
         }
         
         windSpeedLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(temperatureLabel.snp.bottom).offset(20)
+            make.top.equalTo(temperatureLabel.snp.bottom).offset(30)
             make.leading.equalTo(settingsLabel.snp.leading)
         }
         
@@ -125,6 +145,34 @@ final class SettingsView: UIView {
             make.trailing.equalToSuperview().offset(-35)
             make.bottom.equalToSuperview().offset(-16)
             make.height.equalTo(40)
+        }
+        
+        temperatureSegmentedControl.snp.makeConstraints { (make) in
+            make.width.equalTo(80)
+            make.height.equalTo(30)
+            make.trailing.equalToSuperview().offset(-30)
+            make.centerY.equalTo(temperatureLabel)
+        }
+        
+        windSpeedSegmentedControl.snp.makeConstraints { (make) in
+            make.width.equalTo(80)
+            make.height.equalTo(30)
+            make.trailing.equalToSuperview().offset(-30)
+            make.centerY.equalTo(windSpeedLabel)
+        }
+        
+        timeFormatSegmentedControl.snp.makeConstraints { (make) in
+            make.width.equalTo(80)
+            make.height.equalTo(30)
+            make.trailing.equalToSuperview().offset(-30)
+            make.centerY.equalTo(timeFormatLabel)
+        }
+        
+        notificationSegmentedControl.snp.makeConstraints { (make) in
+            make.width.equalTo(80)
+            make.height.equalTo(30)
+            make.trailing.equalToSuperview().offset(-30)
+            make.centerY.equalTo(notificationLabel)
         }
     }
     
