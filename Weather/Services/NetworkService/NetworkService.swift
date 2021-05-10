@@ -10,4 +10,10 @@ import Alamofire
 
 final class NetworkService {
     
+    static let sharedInstance = NetworkService()
+    
+    static func getCurrentWeather() {
+        
+    }
+    
 }

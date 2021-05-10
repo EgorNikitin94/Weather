@@ -18,4 +18,6 @@ final class AppColors {
     let orangeButton = UIColor(red: 0.949, green: 0.431, blue: 0.067, alpha: 1)
     
     let selectedColorButton = UIColor(red: 0.775, green: 0.335, blue: 0.026, alpha: 1)
+    
+    let yellow = UIColor(red: 0.967, green: 0.868, blue: 0.004, alpha: 1)
 }
