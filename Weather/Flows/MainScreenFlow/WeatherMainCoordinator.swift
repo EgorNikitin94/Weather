@@ -20,9 +20,9 @@ class WeatherMainCoordinator: Coordinator {
     }
     
     func start() {
-        let weatherMainViewController = WeatherMainViewController()
+        let viewModel = WeatherMainViewModel()
+        let weatherMainViewController = WeatherMainViewController(viewModel: viewModel)
         weatherMainViewController.coordinator = self
-        //navigator.show(weatherMainViewController, sender: self)
         navigator.pushViewController(weatherMainViewController, animated: true)
     }
     

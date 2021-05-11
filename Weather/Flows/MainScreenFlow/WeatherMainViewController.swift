@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol WeatherMainViewControllerOutput {
+    
+}
+
 final class WeatherMainViewController: UIViewController {
     
     var coordinator: WeatherMainCoordinator?
+    
+    private let viewModel: WeatherMainViewControllerOutput
     
     private lazy var navigationTitle: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -40,10 +46,67 @@ final class WeatherMainViewController: UIViewController {
         return $0
     }(UILabel())
     
+    private lazy var hourlyForecastCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .white
+        collection.contentInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        collection.register(HourlyForecastCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self))
+        collection.dataSource = self
+        collection.delegate = self
+        collection.showsHorizontalScrollIndicator = false
+        return collection
+    }()
+    
+    private lazy var dailyForecastLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Medium", size: 18)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.03
+        $0.attributedText = NSMutableAttributedString(string: "Ежедневный прогноз", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        return $0
+    }(UILabel())
+    
+    private lazy var daysCountLabel: UILabel = {
+        $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+        $0.font = UIFont(name: "Rubik-Regular", size: 16)
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        $0.textAlignment = .right
+        $0.attributedText = NSMutableAttributedString(string: "25 дней", attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(daysCountLabelTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGestureRecognizer)
+        return $0
+    }(UILabel())
+    
+    private lazy var dailyForecastCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .white
+        collection.register(DailyForecastCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: DailyForecastCollectionViewCell.self))
+        collection.dataSource = self
+        collection.delegate = self
+        collection.showsVerticalScrollIndicator = false
+        return collection
+    }()
+    
     private lazy var bottomSafeArea: UIView = {
         $0.backgroundColor = AppColors.sharedInstance.accentBlue
         return $0
     }(UIView())
+    
+    // Mark: - init
+    
+    init(viewModel: WeatherMainViewModel) {
+        self.viewModel = viewModel
+        super .init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,6 +125,10 @@ final class WeatherMainViewController: UIViewController {
     
     @objc private func detailsLabelTapped() {
         print("did Tap")
+    }
+    
+    @objc private func daysCountLabelTapped() {
+        print("daysCountLabel Tap")
     }
     
     private func setupNavigationBar() {
@@ -97,9 +164,13 @@ final class WeatherMainViewController: UIViewController {
     }
     
     private func setupLayout() {
-        view.addSubview(bottomSafeArea)
         view.addSubview(mainWeatherInformationView)
         view.addSubview(detailsLabel)
+        view.addSubview(hourlyForecastCollectionView)
+        view.addSubview(dailyForecastLabel)
+        view.addSubview(daysCountLabel)
+        view.addSubview(dailyForecastCollectionView)
+        view.addSubview(bottomSafeArea)
         
         mainWeatherInformationView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(112)
@@ -113,6 +184,30 @@ final class WeatherMainViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-15)
         }
         
+        hourlyForecastCollectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(detailsLabel.snp.bottom).offset(10)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(83)
+        }
+        
+        dailyForecastLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(hourlyForecastCollectionView.snp.bottom).offset(40)
+            make.leading.equalToSuperview().offset(16)
+        }
+        
+        daysCountLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(hourlyForecastCollectionView.snp.bottom).offset(43)
+            make.trailing.equalToSuperview().offset(-15)
+        }
+        
+        dailyForecastCollectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(dailyForecastLabel.snp.bottom).offset(10)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(bottomSafeArea.snp.top)
+        }
+        
         bottomSafeArea.snp.makeConstraints { (make) in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
@@ -122,4 +217,63 @@ final class WeatherMainViewController: UIViewController {
     }
     
     
+}
+
+
+
+
+extension WeatherMainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == hourlyForecastCollectionView {
+            return 9
+        }
+        return 7
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == hourlyForecastCollectionView {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self), for: indexPath) as! HourlyForecastCollectionViewCell
+        }
+        
+        
+        return collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DailyForecastCollectionViewCell.self), for: indexPath) as! DailyForecastCollectionViewCell
+    }
+    
+    
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == hourlyForecastCollectionView {
+            return CGSize(width: 42, height: 83)
+        }
+        return CGSize(width: collectionView.frame.width - 16 - 15, height: 56)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard collectionView == hourlyForecastCollectionView else { return }
+        let cell = collectionView.cellForItem(at: indexPath) as! HourlyForecastCollectionViewCell
+        if cell.isSelected {
+            cell.configureSelectedItem()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if collectionView == hourlyForecastCollectionView, let cell = collectionView.cellForItem(at: indexPath) as? HourlyForecastCollectionViewCell {
+            if !cell.isSelected {
+                cell.configureUnselectedItem()
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        
+        if collectionView == hourlyForecastCollectionView {
+            return UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        }
+        return UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 15)
+    }
 }
