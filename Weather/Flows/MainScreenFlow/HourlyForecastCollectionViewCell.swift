@@ -9,9 +9,14 @@ import UIKit
 
 final class HourlyForecastCollectionViewCell: UICollectionViewCell {
     
-    var cellConfigure: String? {
+    var configure: (time: String, image: UIImage?, temperature: String)? {
         didSet {
-            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.27
+            timeLabel.attributedText = NSMutableAttributedString(string: configure?.time ?? "0:00", attributes: [NSAttributedString.Key.kern: 0.24, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            weatherImage.image = configure?.image
+            paragraphStyle.lineHeightMultiple = 0.95
+            temperatureLabel.attributedText = NSMutableAttributedString(string: configure?.temperature ?? "0º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
     
@@ -21,7 +26,7 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.27
         $0.textAlignment = .right
-        $0.attributedText = NSMutableAttributedString(string: "12:00", attributes: [NSAttributedString.Key.kern: 0.24, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0:00", attributes: [NSAttributedString.Key.kern: 0.24, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -31,12 +36,11 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 0.95
         $0.textAlignment = .right
-        $0.attributedText = NSMutableAttributedString(string: "15º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
     private lazy var weatherImage: UIImageView = {
-        $0.image = UIImage(named: "Sun")
         return $0
     }(UIImageView())
     

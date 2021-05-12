@@ -9,6 +9,26 @@ import UIKit
 
 final class MainWeatherInformationView: UIView {
     
+    var viewConfigure: (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
+        didSet {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.05
+            dailyTemperatureLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.dailyTemperature ?? "0", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 0.94
+            currentTemperatureLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.currentTemperature ?? "0", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            descriptionWeatherLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.descriptionWeather ?? "", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 1.08
+            cloudyLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.cloudy ??  "0", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            windSpeedLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.windSpeed ??  "0 м/с", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            humidityLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.humidity ??  "0%", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 1.15
+            sunriseLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.sunrise ?? "0:00", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            sunsetLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.sunset ?? "0:00", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 1.15
+            currentDateLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.currentDate ?? "", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        }
+    }
+    
     private lazy var ellipseImage: UIImageView = {
         $0.image = UIImage(named: "Ellipse")
         $0.contentMode = .scaleToFill
@@ -20,7 +40,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.05
-        $0.attributedText = NSMutableAttributedString(string: "7º /13º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0º /0º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -29,7 +49,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 36)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 0.94
-        $0.attributedText = NSMutableAttributedString(string: "13º", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0º", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -38,7 +58,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 0.94
-        $0.attributedText = NSMutableAttributedString(string: "Возможен небольшой дождь", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "...", attributes: [NSAttributedString.Key.kern: 3.06, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -76,7 +96,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 14)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.08
-        $0.attributedText = NSMutableAttributedString(string: "3 м\\с", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0 м\\с", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -90,7 +110,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 14)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.08
-        $0.attributedText = NSMutableAttributedString(string: "75%", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0%", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -104,7 +124,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Medium", size: 14)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.15
-        $0.attributedText = NSMutableAttributedString(string: "5:41", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0:00", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -118,7 +138,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Medium", size: 14)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.15
-        $0.attributedText = NSMutableAttributedString(string: "19:31", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "00:00", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -127,7 +147,7 @@ final class MainWeatherInformationView: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.15
-        $0.attributedText = NSMutableAttributedString(string: "17:48,  пт 16 апреля", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "...", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     

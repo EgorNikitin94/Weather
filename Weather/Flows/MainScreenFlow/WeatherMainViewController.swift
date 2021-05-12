@@ -8,14 +8,19 @@
 import UIKit
 
 protocol WeatherMainViewControllerOutput {
-    
+    var onDataLoaded: (()->Void)? { get set }
+    func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
+    func configureHourlyItem(with object: Hourly) -> (time: String, image: UIImage?, temperature: String)?
+    func configureDailyItem(with object: Daily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
+    func getHourlyWeatherArray() -> [Hourly]
+    func getDailyWeatherArray() -> [Daily]
 }
 
 final class WeatherMainViewController: UIViewController {
     
     var coordinator: WeatherMainCoordinator?
     
-    private let viewModel: WeatherMainViewControllerOutput
+    private var viewModel: WeatherMainViewControllerOutput
     
     private lazy var navigationTitle: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -23,7 +28,7 @@ final class WeatherMainViewController: UIViewController {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.03
         $0.textAlignment = .right
-        $0.attributedText = NSMutableAttributedString(string: "Moscow,Russia", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "Los Angeles,USA", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -113,6 +118,15 @@ final class WeatherMainViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupLayout()
+        getData()
+    }
+    
+    private func getData() {
+        viewModel.onDataLoaded = {
+            self.mainWeatherInformationView.viewConfigure = self.viewModel.configureMainInformationView()
+            self.hourlyForecastCollectionView.reloadData()
+            self.dailyForecastCollectionView.reloadData()
+        }
     }
     
     @objc private func openSettings() {
@@ -224,24 +238,27 @@ final class WeatherMainViewController: UIViewController {
 
 extension WeatherMainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == hourlyForecastCollectionView {
-            return 9
+            return viewModel.getHourlyWeatherArray().count
         }
-        return 7
+        return viewModel.getDailyWeatherArray().count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == hourlyForecastCollectionView {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self), for: indexPath) as! HourlyForecastCollectionViewCell
+            let item = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self), for: indexPath) as! HourlyForecastCollectionViewCell
+            let hurlyWeatherArray = viewModel.getHourlyWeatherArray()
+            let hourlyWeather = hurlyWeatherArray[indexPath.item]
+            item.configure = viewModel.configureHourlyItem(with: hourlyWeather)
+            return item
         }
         
-        
-        return collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DailyForecastCollectionViewCell.self), for: indexPath) as! DailyForecastCollectionViewCell
+        let item = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DailyForecastCollectionViewCell.self), for: indexPath) as! DailyForecastCollectionViewCell
+        let dailyWeatherArray = viewModel.getDailyWeatherArray()
+        let dailyWeather = dailyWeatherArray[indexPath.item]
+        item.configure = viewModel.configureDailyItem(with: dailyWeather)
+        return item
     }
     
     

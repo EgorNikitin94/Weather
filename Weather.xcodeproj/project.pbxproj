@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		503B77A6264BF38C00ACF83B /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B77A5264BF38C00ACF83B /* StringExtension.swift */; };
 		5078996F26496A9C00C59F94 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5078996E26496A9C00C59F94 /* ApiKeys.swift */; };
 		507915CA264A947300DBD9C2 /* WeatherMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */; };
+		507915D1264AAF9F00DBD9C2 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507915D0264AAF9F00DBD9C2 /* Weather.swift */; };
 		5093B8272649E96200ED31B8 /* HourlyForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5093B8262649E96100ED31B8 /* HourlyForecastCollectionViewCell.swift */; };
 		5093B82A2649E99600ED31B8 /* DailyForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5093B8292649E99600ED31B8 /* DailyForecastCollectionViewCell.swift */; };
 		5094E3A02642BA8700140AD2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5094E39F2642BA8600140AD2 /* Coordinator.swift */; };
@@ -38,8 +40,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		503B77A5264BF38C00ACF83B /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		5078996E26496A9C00C59F94 /* ApiKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeys.swift; sourceTree = "<group>"; };
 		507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMainViewModel.swift; sourceTree = "<group>"; };
+		507915D0264AAF9F00DBD9C2 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		5093B8262649E96100ED31B8 /* HourlyForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		5093B8292649E99600ED31B8 /* DailyForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		5094E39F2642BA8600140AD2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
@@ -92,6 +96,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		507915CD264A9E2E00DBD9C2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				507915D0264AAF9F00DBD9C2 /* Weather.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		5094E39E2642B8C000140AD2 /* App navigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +138,7 @@
 			children = (
 				5094E3BA2642CAAA00140AD2 /* UIButtonExtension.swift */,
 				5094E3BE2642E5C400140AD2 /* UIImageExtension.swift */,
+				503B77A5264BF38C00ACF83B /* StringExtension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -248,6 +261,7 @@
 				50DC4AF52641B28D00F2FAE8 /* Application launch */,
 				5094E39E2642B8C000140AD2 /* App navigation */,
 				50DC4AF32641B25000F2FAE8 /* Services */,
+				507915CD264A9E2E00DBD9C2 /* Models */,
 				50DC4AF42641B26D00F2FAE8 /* Flows */,
 				50DC4AF12641B1F700F2FAE8 /* Resources */,
 				5094E3B92642CA7E00140AD2 /* Helpers */,
@@ -396,6 +410,7 @@
 				50E29CE0264010D000066B93 /* AppColors.swift in Sources */,
 				50DC4AEC264188F400F2FAE8 /* LocationManager.swift in Sources */,
 				50F73DD62644935900D739BD /* CustomSegmentedControl.swift in Sources */,
+				503B77A6264BF38C00ACF83B /* StringExtension.swift in Sources */,
 				5094E3C82642F04800140AD2 /* SettingsView.swift in Sources */,
 				50E29CC92640066D00066B93 /* OnboardingViewController.swift in Sources */,
 				50DC4AF82641B7E900F2FAE8 /* WeatherMainViewController.swift in Sources */,
@@ -405,6 +420,7 @@
 				5094E3C52642E9BF00140AD2 /* SettingsCoordinator.swift in Sources */,
 				5094E3BB2642CAAA00140AD2 /* UIButtonExtension.swift in Sources */,
 				5094E3BF2642E5C400140AD2 /* UIImageExtension.swift in Sources */,
+				507915D1264AAF9F00DBD9C2 /* Weather.swift in Sources */,
 				5078996F26496A9C00C59F94 /* ApiKeys.swift in Sources */,
 				50FA41CC26481F590073026A /* MainWeatherInformationView.swift in Sources */,
 				5094E3AE2642BCB200140AD2 /* WeatherMainCoordinator.swift in Sources */,

@@ -9,9 +9,18 @@ import UIKit
 
 final class DailyForecastCollectionViewCell: UICollectionViewCell {
     
-    var cellConfigure: String? {
+    var configure: (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)? {
         didSet {
-            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.05
+            dateLabel.attributedText = NSMutableAttributedString(string: configure?.dayDate ?? "06/07", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            weatherImage.image = configure?.image
+            paragraphStyle.lineHeightMultiple = 1.13
+            humidityLabel.attributedText = NSMutableAttributedString(string: configure?.humidity ?? "0%", attributes: [NSAttributedString.Key.kern: -0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 1.05
+            descriptionWeatherLabel.attributedText = NSMutableAttributedString(string: configure?.descriptionWeather ?? "...", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            paragraphStyle.lineHeightMultiple = 1.08
+            temperatureLabel.attributedText = NSMutableAttributedString(string: configure?.temperature ?? "0º -0º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
     
@@ -20,7 +29,7 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.05
-        $0.attributedText = NSMutableAttributedString(string: "19/04", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "06/07", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -34,7 +43,7 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont(name: "Rubik-Regular", size: 12)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.13
-        $0.attributedText = NSMutableAttributedString(string: "57%", attributes: [NSAttributedString.Key.kern: -0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0%", attributes: [NSAttributedString.Key.kern: -0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -43,7 +52,7 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.05
-        $0.attributedText = NSMutableAttributedString(string: "Преимущес...облачно", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "...", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -52,7 +61,7 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont(name: "Rubik-Regular", size: 18)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.08
-        $0.attributedText = NSMutableAttributedString(string: "16º -20º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "0º -0º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
