@@ -38,6 +38,7 @@ final class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
+        navigationItem.hidesBackButton = true
         view.backgroundColor = AppColors.sharedInstance.accentBlue
         setupLayout()
         onSetupButtonTapped()
@@ -46,6 +47,7 @@ final class SettingsViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
+        navigationItem.hidesBackButton = true
     }
 
     

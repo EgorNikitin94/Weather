@@ -30,7 +30,7 @@ class SettingsCoordinator: Coordinator {
     }
     
     func popToWeatherMainViewController() {
-        navigator.popViewController(animated: false)
+        navigator.popViewController(animated: true)
     }
     
     func childDidFinish(_ child: Coordinator?) {

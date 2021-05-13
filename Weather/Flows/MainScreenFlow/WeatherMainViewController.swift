@@ -22,6 +22,12 @@ final class WeatherMainViewController: UIViewController {
     
     private var viewModel: WeatherMainViewControllerOutput
     
+    var weatherPageViewController: WeatherPageViewController? {
+            didSet {
+                weatherPageViewController?.weatherDelegate = self
+            }
+        }
+    
     private lazy var navigationTitle: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Medium", size: 18)
@@ -31,6 +37,13 @@ final class WeatherMainViewController: UIViewController {
         $0.attributedText = NSMutableAttributedString(string: "Los Angeles,USA", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
+    
+    private lazy var pageControl: UIPageControl = {
+        $0.numberOfPages = 3
+        $0.currentPage = 0
+        $0.addTarget(self, action: #selector(didChangePageControlValue), for: .valueChanged)
+        return $0
+    }(UIPageControl())
     
     private lazy var mainWeatherInformationView: MainWeatherInformationView = {
         $0.clipsToBounds = true
@@ -113,6 +126,11 @@ final class WeatherMainViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -123,11 +141,19 @@ final class WeatherMainViewController: UIViewController {
     
     private func getData() {
         viewModel.onDataLoaded = {
-            self.mainWeatherInformationView.viewConfigure = self.viewModel.configureMainInformationView()
-            self.hourlyForecastCollectionView.reloadData()
-            self.dailyForecastCollectionView.reloadData()
+            self.updateData()
         }
     }
+    
+    private func updateData() {
+        mainWeatherInformationView.viewConfigure = viewModel.configureMainInformationView()
+        hourlyForecastCollectionView.reloadData()
+        dailyForecastCollectionView.reloadData()
+    }
+    
+    @objc func didChangePageControlValue() {
+            weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)
+        }
     
     @objc private func openSettings() {
         coordinator?.pushSettingsViewController()
@@ -166,18 +192,11 @@ final class WeatherMainViewController: UIViewController {
         navigationItem.rightBarButtonItem = cityButton
         navigationItem.leftBarButtonItem?.tintColor = .black
         navigationItem.rightBarButtonItem?.tintColor = .black
-        
-        //        let navBarsize = navigationController!.navigationBar.bounds.size
-        //        let origin = CGPoint(x: navBarsize.width/2, y: navBarsize.height/2)
-        //
-        //        let pageControl = UIPageControl(frame: CGRect(x: origin.x - 50, y: 45, width: 100, height: 10))
-        //        pageControl.numberOfPages = 2
-        //        pageControl.currentPage = 1
-        //
-        //        navigationController?.navigationBar.addSubview(pageControl)
+    
     }
     
     private func setupLayout() {
+        view.addSubview(pageControl)
         view.addSubview(mainWeatherInformationView)
         view.addSubview(detailsLabel)
         view.addSubview(hourlyForecastCollectionView)
@@ -185,6 +204,11 @@ final class WeatherMainViewController: UIViewController {
         view.addSubview(daysCountLabel)
         view.addSubview(dailyForecastCollectionView)
         view.addSubview(bottomSafeArea)
+        
+        pageControl.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(82)
+        }
         
         mainWeatherInformationView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(112)
@@ -250,6 +274,9 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self), for: indexPath) as! HourlyForecastCollectionViewCell
             let hurlyWeatherArray = viewModel.getHourlyWeatherArray()
             let hourlyWeather = hurlyWeatherArray[indexPath.item]
+            if indexPath.item == 1 {
+                item.configureSelectedItem()
+            }
             item.configure = viewModel.configureHourlyItem(with: hourlyWeather)
             return item
         }
@@ -271,21 +298,9 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard collectionView == hourlyForecastCollectionView else { return }
-        let cell = collectionView.cellForItem(at: indexPath) as! HourlyForecastCollectionViewCell
-        if cell.isSelected {
-            cell.configureSelectedItem()
-        }
+        //
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if collectionView == hourlyForecastCollectionView, let cell = collectionView.cellForItem(at: indexPath) as? HourlyForecastCollectionViewCell {
-            if !cell.isSelected {
-                cell.configureUnselectedItem()
-            }
-        }
-    }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         
         if collectionView == hourlyForecastCollectionView {
@@ -293,4 +308,18 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
         }
         return UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 15)
     }
+}
+
+extension WeatherMainViewController: WeatherPageViewControllerDelegate {
+    
+    func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
+        didUpdatePageCount count: Int) {
+        pageControl.numberOfPages = count
+    }
+    
+    func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
+        didUpdatePageIndex index: Int) {
+        pageControl.currentPage = index
+    }
+    
 }

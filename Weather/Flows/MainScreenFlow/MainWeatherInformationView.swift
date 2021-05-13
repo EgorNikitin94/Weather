@@ -185,12 +185,12 @@ final class MainWeatherInformationView: UIView {
         
         dailyTemperatureLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(33)
-            make.centerX.equalToSuperview()
+            make.centerX.equalToSuperview().offset(3)
         }
         
         currentTemperatureLabel.snp.makeConstraints { (make) in
             make.top.equalTo(dailyTemperatureLabel.snp.bottom).offset(5)
-            make.centerX.equalToSuperview()
+            make.centerX.equalToSuperview().offset(1.5)
         }
         
         descriptionWeatherLabel.snp.makeConstraints { (make) in
@@ -218,7 +218,6 @@ final class MainWeatherInformationView: UIView {
         }
         
         windyContainerView.snp.makeConstraints { (make) in
-            make.width.equalTo(66)
             make.height.equalTo(18)
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(7)
@@ -230,10 +229,10 @@ final class MainWeatherInformationView: UIView {
             make.leading.equalToSuperview()
             make.width.equalTo(25)
             make.height.equalTo(16)
-            make.leading.equalToSuperview()
         }
         
         windSpeedLabel.snp.makeConstraints { (make) in
+            make.leading.equalTo(windSpeedImage.snp.trailing).offset(5)
             make.centerY.equalTo(windSpeedImage)
             make.trailing.equalToSuperview()
         }
@@ -260,7 +259,8 @@ final class MainWeatherInformationView: UIView {
         
         sunriseLabel.snp.makeConstraints { (make) in
             make.top.equalTo(sunriseImage.snp.bottom).offset(5)
-            make.centerX.equalTo(sunriseImage)
+            //make.centerX.equalTo(sunriseImage)
+            make.leading.equalToSuperview().offset(17)
         }
         
         sunsetImage.snp.makeConstraints { (make) in
@@ -272,7 +272,8 @@ final class MainWeatherInformationView: UIView {
         
         sunsetLabel.snp.makeConstraints { (make) in
             make.top.equalTo(sunsetImage.snp.bottom).offset(5)
-            make.centerX.equalTo(sunsetImage)
+            //make.centerX.equalTo(sunsetImage)
+            make.trailing.equalToSuperview().offset(-14)
         }
         
         currentDateLabel.snp.makeConstraints { (make) in

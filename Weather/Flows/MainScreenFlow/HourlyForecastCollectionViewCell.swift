@@ -56,22 +56,52 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    func configure(with object: Current) {
-//        temperatureLabel.text = "\(Int(object.temp))°"
-//        setupTimeLabel(time: object.dt)
-//        setupWeatherImage(weather: object.weather.first?.main.rawValue)
-//    }
-    
     func configureSelectedItem() {
-        contentView.backgroundColor = AppColors.sharedInstance.accentBlue
+        
+        let shadowPath0 = UIBezierPath(roundedRect: contentView.bounds, cornerRadius: 22)
+
+        let shadowLayer = CALayer()
+
+        shadowLayer.shadowPath = shadowPath0.cgPath
+
+        shadowLayer.shadowColor = UIColor(red: 0.4, green: 0.546, blue: 0.942, alpha: 0.68).cgColor
+
+        shadowLayer.shadowOpacity = 1
+
+        shadowLayer.shadowRadius = 45
+
+        shadowLayer.shadowOffset = CGSize(width: -5, height: 5)
+
+        shadowLayer.frame = CGRect(x: 0, y: 0, width: contentView.frame.size.width, height: contentView.frame.size.height)
+
+        contentView.layer.insertSublayer(shadowLayer, at: 0)
+        
+        let gradientLayer = CAGradientLayer()
+
+        gradientLayer.colors = [
+
+          UIColor(red: 0.246, green: 0.398, blue: 0.808, alpha: 0.58).cgColor,
+
+          UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
+
+        ]
+
+        gradientLayer.locations = [0, 0.73]
+
+        gradientLayer.startPoint = CGPoint(x: 0.25, y: 0.5)
+
+        gradientLayer.endPoint = CGPoint(x: 0.75, y: 0.5)
+
+        gradientLayer.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 0, b: 1, c: -1, d: 0, tx: 1, ty: 0))
+
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: contentView.frame.size.width, height: contentView.frame.size.height)
+
+        gradientLayer.cornerRadius = 22
+
+        contentView.layer.insertSublayer(gradientLayer, at: 0)
+        //contentView.backgroundColor = AppColors.sharedInstance.accentBlue
         timeLabel.textColor = .white
         temperatureLabel.textColor = .white
-    }
-    
-    func configureUnselectedItem() {
-        contentView.backgroundColor = .white
-        timeLabel.textColor = UIColor(red: 0.613, green: 0.592, blue: 0.592, alpha: 1)
-        temperatureLabel.textColor = UIColor(red: 0.204, green: 0.187, blue: 0.187, alpha: 1)
     }
     
     private func setupCellView() {
@@ -100,7 +130,7 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         
         temperatureLabel.snp.makeConstraints { (make) in
             make.bottom.equalToSuperview().offset(-7)
-            make.centerX.equalToSuperview()
+            make.centerX.equalToSuperview().offset(1.5)
         }
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5000AD68264D645E00E39E71 /* WeatherPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */; };
 		503B77A6264BF38C00ACF83B /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B77A5264BF38C00ACF83B /* StringExtension.swift */; };
 		5078996F26496A9C00C59F94 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5078996E26496A9C00C59F94 /* ApiKeys.swift */; };
 		507915CA264A947300DBD9C2 /* WeatherMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPageViewController.swift; sourceTree = "<group>"; };
 		503B77A5264BF38C00ACF83B /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		5078996E26496A9C00C59F94 /* ApiKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeys.swift; sourceTree = "<group>"; };
 		507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMainViewModel.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 			children = (
 				5094E3AD2642BCB200140AD2 /* WeatherMainCoordinator.swift */,
 				507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */,
+				5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */,
 				50DC4AF72641B7E900F2FAE8 /* WeatherMainViewController.swift */,
 				50FA41CB26481F590073026A /* MainWeatherInformationView.swift */,
 				5093B8262649E96100ED31B8 /* HourlyForecastCollectionViewCell.swift */,
@@ -425,6 +428,7 @@
 				50FA41CC26481F590073026A /* MainWeatherInformationView.swift in Sources */,
 				5094E3AE2642BCB200140AD2 /* WeatherMainCoordinator.swift in Sources */,
 				5094E3AB2642BC1900140AD2 /* OnboardingCoordinator.swift in Sources */,
+				5000AD68264D645E00E39E71 /* WeatherPageViewController.swift in Sources */,
 				50E29CC52640066D00066B93 /* AppDelegate.swift in Sources */,
 				5093B8272649E96200ED31B8 /* HourlyForecastCollectionViewCell.swift in Sources */,
 				50DC4AFB2641B83400F2FAE8 /* NetworkService.swift in Sources */,
