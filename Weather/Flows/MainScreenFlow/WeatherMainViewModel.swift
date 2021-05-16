@@ -11,6 +11,8 @@ final class WeatherMainViewModel: WeatherMainViewControllerOutput {
     
     var onDataLoaded: (()->Void)?
     
+    var onCityNameLoad: ((String)->Void)?
+    
     private var weatherDataStorage: WeatherData? {
         didSet {
             onDataLoaded?()
@@ -76,6 +78,13 @@ final class WeatherMainViewModel: WeatherMainViewControllerOutput {
         return (dayDate, image, humidity, descriptionWeather, temperature)
     }
     
+    public func configureCityName() -> String? {
+        guard let city = weatherDataStorage?.city else {
+            return nil
+        }
+        return city.fullName
+    }
+    
     public func getHourlyWeatherArray() -> [Hourly] {
         guard let weather = weatherDataStorage else {
             return []
@@ -133,9 +142,18 @@ final class WeatherMainViewModel: WeatherMainViewControllerOutput {
     
     private func loadWeatherData() {
         LocationManager.sharedInstance.getCurrentLocation { (locationCoordinate) in
+            
             NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
                 self?.weatherDataStorage = weatherData
+                self?.loadCityName(location: locationCoordinate)
             }
+            
+        }
+    }
+    
+    private func loadCityName(location: LocationCoordinate) {
+        NetworkService.getNameOfCity(location: location) { [weak self] (city) in
+            self?.weatherDataStorage?.city = city
         }
     }
     

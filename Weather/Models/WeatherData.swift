@@ -8,6 +8,7 @@
 import Foundation
 
 struct WeatherData: Decodable {
+    var city: City?
     let current: Current
     let timezone: String
     let timezoneOffset: Int
@@ -16,7 +17,7 @@ struct WeatherData: Decodable {
     var daily: [Daily]
     
     enum CodingKeys: String, CodingKey {
-        case current,timezone, hourly, daily
+        case current,timezone, hourly, daily, city
         case timezoneOffset = "timezone_offset"
     }
 }

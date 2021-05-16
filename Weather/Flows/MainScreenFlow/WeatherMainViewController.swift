@@ -14,40 +14,75 @@ protocol WeatherMainViewControllerOutput {
     func configureDailyItem(with object: Daily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
     func getHourlyWeatherArray() -> [Hourly]
     func getDailyWeatherArray() -> [Daily]
+    func configureCityName() -> String?
+}
+
+enum MainWeatherControllerState {
+    case currentLocationWeather
+    case emptyWithPlus
+    case selectedCityWeather
 }
 
 final class WeatherMainViewController: UIViewController {
     
     var coordinator: WeatherMainCoordinator?
     
+    private var stateViewController: MainWeatherControllerState
+    
     private var viewModel: WeatherMainViewControllerOutput
     
     var weatherPageViewController: WeatherPageViewController? {
-            didSet {
-                weatherPageViewController?.weatherDelegate = self
-            }
+        didSet {
+            weatherPageViewController?.weatherDelegate = self
         }
+    }
     
-    private lazy var navigationTitle: UILabel = {
+    private lazy var cityNameLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Medium", size: 18)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.03
         $0.textAlignment = .right
-        $0.attributedText = NSMutableAttributedString(string: "Los Angeles,USA", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.03
+        $0.attributedText = NSMutableAttributedString(string: "Unknown", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
+    private lazy var settingsButton: UIButton = {
+        $0.setImage(UIImage(named: "Settings"), for: .normal)
+        $0.tintColor = .black
+        $0.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
+        return $0
+    }(UIButton())
+    
+    private lazy var geolocationButton: UIButton = {
+        $0.setImage(UIImage(named: "Mark"), for: .normal)
+        $0.tintColor = .black
+        $0.addTarget(self, action: #selector(useGeolocation), for: .touchUpInside)
+        return $0
+    }(UIButton())
+    
+    
     private lazy var pageControl: UIPageControl = {
-        $0.numberOfPages = 3
-        $0.currentPage = 0
+        $0.currentPageIndicatorTintColor = .black
+        $0.pageIndicatorTintColor = .blue
         $0.addTarget(self, action: #selector(didChangePageControlValue), for: .valueChanged)
         return $0
     }(UIPageControl())
     
+    private lazy var plusImage: UIImageView = {
+        $0.image = UIImage(named: "Plus")
+        $0.contentMode = .scaleToFill
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(plusImageTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGestureRecognizer)
+        $0.isHidden = stateViewController == .emptyWithPlus ? false : true
+        return $0
+    }(UIImageView())
+    
     private lazy var mainWeatherInformationView: MainWeatherInformationView = {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 5
+        $0.isHidden = stateViewController == .emptyWithPlus ? true : false
         return $0
     }(MainWeatherInformationView())
     
@@ -61,6 +96,7 @@ final class WeatherMainViewController: UIViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(detailsLabelTapped))
         $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(tapGestureRecognizer)
+        $0.isHidden = stateViewController == .emptyWithPlus ? true : false
         return $0
     }(UILabel())
     
@@ -74,6 +110,7 @@ final class WeatherMainViewController: UIViewController {
         collection.dataSource = self
         collection.delegate = self
         collection.showsHorizontalScrollIndicator = false
+        collection.isHidden = stateViewController == .emptyWithPlus ? true : false
         return collection
     }()
     
@@ -83,6 +120,7 @@ final class WeatherMainViewController: UIViewController {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.03
         $0.attributedText = NSMutableAttributedString(string: "Ежедневный прогноз", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.isHidden = stateViewController == .emptyWithPlus ? true : false
         return $0
     }(UILabel())
     
@@ -96,6 +134,7 @@ final class WeatherMainViewController: UIViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(daysCountLabelTapped))
         $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(tapGestureRecognizer)
+        $0.isHidden = stateViewController == .emptyWithPlus ? true : false
         return $0
     }(UILabel())
     
@@ -107,6 +146,7 @@ final class WeatherMainViewController: UIViewController {
         collection.dataSource = self
         collection.delegate = self
         collection.showsVerticalScrollIndicator = false
+        collection.isHidden = stateViewController == .emptyWithPlus ? true : false
         return collection
     }()
     
@@ -117,8 +157,9 @@ final class WeatherMainViewController: UIViewController {
     
     // Mark: - init
     
-    init(viewModel: WeatherMainViewModel) {
+    init(viewModel: WeatherMainViewModel, stateViewController: MainWeatherControllerState) {
         self.viewModel = viewModel
+        self.stateViewController = stateViewController
         super .init(nibName: nil, bundle: nil)
     }
     
@@ -134,6 +175,22 @@ final class WeatherMainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        pageControl.numberOfPages = weatherPageViewController?.orderedViewControllers.count ?? 1
+        pageControl.currentPage = 0
+//        if #available(iOS 14.0, *) {
+//            guard let viewControllersArray = weatherPageViewController?.orderedViewControllers else {return}
+//            for (index, _) in viewControllersArray.enumerated() {
+//                if pageControl.currentPage == index {
+//                    let image = UIImage(systemName: "circlebadge.fill")!.withTintColor(.black)
+//                    pageControl.setIndicatorImage(image, forPage: index)
+//                } else {
+//                    let image = UIImage(systemName: "circlebadge")!.withTintColor(.black)
+//                    pageControl.setIndicatorImage(image, forPage: index)
+//                }
+//            }
+//        } else {
+//            pageControl.customPageControl(dotFillColor: .black, dotBorderColor: .black, dotBorderWidth: 1)
+//        }
         setupNavigationBar()
         setupLayout()
         getData()
@@ -149,17 +206,44 @@ final class WeatherMainViewController: UIViewController {
         mainWeatherInformationView.viewConfigure = viewModel.configureMainInformationView()
         hourlyForecastCollectionView.reloadData()
         dailyForecastCollectionView.reloadData()
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.03
+        guard let cityName = viewModel.configureCityName() else {
+            return
+        }
+        cityNameLabel.attributedText = NSMutableAttributedString(string: cityName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+    }
+    
+    @objc func plusImageTapped() {
+        let alertController = UIAlertController(title: "Введите название города для отображения погоды", message: nil, preferredStyle: .alert)
+        alertController.addTextField { (text) in
+            text.placeholder = "название города"
+        }
+        let alertActionFind = UIAlertAction(title: "ОК", style: .default) {  (alert) in//[weak self]
+            //guard let self = self else { return }
+            let cityName = alertController.textFields?[0].text
+            if let name = cityName, name != "" {
+                NetworkService.getGeolocationOfCity(cityName: name) { (city) in
+                    print(city)
+                }
+            }
+            
+        }
+        let alertActionCancel = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        alertController.addAction(alertActionFind)
+        alertController.addAction(alertActionCancel)
+        present(alertController, animated: true, completion: nil)
     }
     
     @objc func didChangePageControlValue() {
-            weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)
-        }
+        weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)
+    }
     
     @objc private func openSettings() {
         coordinator?.pushSettingsViewController()
     }
     
-    @objc private func addCity() {
+    @objc private func useGeolocation() {
         print("CityButton")
     }
     
@@ -173,30 +257,34 @@ final class WeatherMainViewController: UIViewController {
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
         
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = true
-        
-        navigationItem.titleView = navigationTitle
-        
-        let settingsButtonImage = UIImage(named: "Settings")
-        let cityButtonImage = UIImage(named: "Mark")
-        let resizedCityButtonImage = cityButtonImage?.resized(to: CGSize(width: 20, height: 26))
-        
-        let settingsButton = UIBarButtonItem(image: settingsButtonImage, style: .plain, target: self, action: #selector(openSettings))
-        let cityButton = UIBarButtonItem(image: resizedCityButtonImage, style: .plain, target: self, action: #selector(addCity))
-        navigationItem.leftBarButtonItem = settingsButton
-        navigationItem.rightBarButtonItem = cityButton
-        navigationItem.leftBarButtonItem?.tintColor = .black
-        navigationItem.rightBarButtonItem?.tintColor = .black
-    
+        //        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        //        navigationController?.navigationBar.shadowImage = UIImage()
+        //        navigationController?.navigationBar.isTranslucent = true
+        //
+        //        navigationItem.titleView = navigationTitle
+        //
+        //        let settingsButtonImage = UIImage(named: "Settings")
+        //        let cityButtonImage = UIImage(named: "Mark")
+        //        let resizedCityButtonImage = cityButtonImage?.resized(to: CGSize(width: 20, height: 26))
+        //
+        //        let settingsButton = UIBarButtonItem(image: settingsButtonImage, style: .plain, target: self, action: #selector(openSettings))
+        //        let cityButton = UIBarButtonItem(image: resizedCityButtonImage, style: .plain, target: self, action: #selector(addCity))
+        //        navigationItem.leftBarButtonItem = settingsButton
+        //        navigationItem.rightBarButtonItem = cityButton
+        //        navigationItem.leftBarButtonItem?.tintColor = .black
+        //        navigationItem.rightBarButtonItem?.tintColor = .black
+        //
     }
     
     private func setupLayout() {
+        view.addSubview(cityNameLabel)
+        view.addSubview(settingsButton)
+        view.addSubview(geolocationButton)
         view.addSubview(pageControl)
+        view.addSubview(plusImage)
         view.addSubview(mainWeatherInformationView)
         view.addSubview(detailsLabel)
         view.addSubview(hourlyForecastCollectionView)
@@ -205,13 +293,39 @@ final class WeatherMainViewController: UIViewController {
         view.addSubview(dailyForecastCollectionView)
         view.addSubview(bottomSafeArea)
         
+        cityNameLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
+            make.centerX.equalToSuperview()
+        }
+        
+        settingsButton.snp.makeConstraints { (make) in
+            make.leading.equalToSuperview().offset(16)
+            make.centerY.equalTo(cityNameLabel)
+            make.width.equalTo(36)
+            make.height.equalTo(20)
+        }
+        
+        geolocationButton.snp.makeConstraints { (make) in
+            make.trailing.equalToSuperview().offset(-15)
+            make.centerY.equalTo(cityNameLabel)
+            make.width.equalTo(20)
+            make.height.equalTo(26)
+        }
+        
         pageControl.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(82)
+            make.top.equalTo(cityNameLabel.snp.bottom).offset(19)
+        }
+        
+        plusImage.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.width.equalTo(200)
+            make.height.equalTo(200)
         }
         
         mainWeatherInformationView.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(112)
+            make.top.equalTo(pageControl.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-15)
             make.height.equalTo(215)
@@ -275,6 +389,7 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
             let hurlyWeatherArray = viewModel.getHourlyWeatherArray()
             let hourlyWeather = hurlyWeatherArray[indexPath.item]
             if indexPath.item == 1 {
+                item.prepareForReuse()
                 item.configureSelectedItem()
             }
             item.configure = viewModel.configureHourlyItem(with: hourlyWeather)
@@ -300,7 +415,7 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         
         if collectionView == hourlyForecastCollectionView {
@@ -313,12 +428,12 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
 extension WeatherMainViewController: WeatherPageViewControllerDelegate {
     
     func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
-        didUpdatePageCount count: Int) {
+                                   didUpdatePageCount count: Int) {
         pageControl.numberOfPages = count
     }
     
     func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
-        didUpdatePageIndex index: Int) {
+                                   didUpdatePageIndex index: Int) {
         pageControl.currentPage = index
     }
     

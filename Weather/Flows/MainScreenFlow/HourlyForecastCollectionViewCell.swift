@@ -20,6 +20,10 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    let shadowLayer = CALayer()
+    
+    let gradientLayer = CAGradientLayer()
+    
     private lazy var timeLabel: UILabel = {
         $0.textColor = UIColor(red: 0.613, green: 0.592, blue: 0.592, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 12)
@@ -60,8 +64,6 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         
         let shadowPath0 = UIBezierPath(roundedRect: contentView.bounds, cornerRadius: 22)
 
-        let shadowLayer = CALayer()
-
         shadowLayer.shadowPath = shadowPath0.cgPath
 
         shadowLayer.shadowColor = UIColor(red: 0.4, green: 0.546, blue: 0.942, alpha: 0.68).cgColor
@@ -75,8 +77,6 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         shadowLayer.frame = CGRect(x: 0, y: 0, width: contentView.frame.size.width, height: contentView.frame.size.height)
 
         contentView.layer.insertSublayer(shadowLayer, at: 0)
-        
-        let gradientLayer = CAGradientLayer()
 
         gradientLayer.colors = [
 
@@ -102,6 +102,14 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         //contentView.backgroundColor = AppColors.sharedInstance.accentBlue
         timeLabel.textColor = .white
         temperatureLabel.textColor = .white
+    }
+    
+    override func prepareForReuse() {
+        timeLabel.textColor = .black
+        temperatureLabel.textColor = .black
+        gradientLayer.removeFromSuperlayer()
+        shadowLayer.removeFromSuperlayer()
+        
     }
     
     private func setupCellView() {

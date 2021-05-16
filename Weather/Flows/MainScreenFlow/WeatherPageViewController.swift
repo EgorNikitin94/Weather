@@ -34,14 +34,12 @@ final class WeatherPageViewController: UIPageViewController {
     
     weak var weatherDelegate: WeatherPageViewControllerDelegate?
     
-    private(set) lazy var orderedViewControllers: [UIViewController] = {
-        // The view controllers will be shown in this order
-        return [WeatherMainViewController(viewModel: WeatherMainViewModel()), WeatherMainViewController(viewModel: WeatherMainViewModel())]
-    }()
+    var orderedViewControllers: [UIViewController] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .white
         dataSource = self
         delegate = self
         
@@ -76,12 +74,6 @@ final class WeatherPageViewController: UIPageViewController {
                 scrollToViewController(viewController: nextViewController, direction: direction)
         }
     }
-    
-    func newColoredViewController(_ color: String) -> UIViewController {
-        return UIStoryboard(name: "Main", bundle: nil) .
-            instantiateViewController(withIdentifier: "\(color)ViewController")
-    }
-    
     /**
      Scrolls to the given 'viewController' page.
      
@@ -126,7 +118,7 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
             // User is on the first view controller and swiped left to loop to
             // the last view controller.
             guard previousIndex >= 0 else {
-                return orderedViewControllers.last
+                return nil
             }
             
             guard orderedViewControllers.count > previousIndex else {
@@ -148,8 +140,7 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
             // User is on the last view controller and swiped right to loop to
             // the first view controller.
             guard orderedViewControllersCount != nextIndex else {
-                return orderedViewControllers.first
-            }
+                return nil            }
             
             guard orderedViewControllersCount > nextIndex else {
                 return nil

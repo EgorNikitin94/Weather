@@ -20,10 +20,16 @@ class WeatherMainCoordinator: Coordinator {
     }
     
     func start() {
+        let pageViewController = WeatherPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         let viewModel = WeatherMainViewModel()
-        let weatherMainViewController = WeatherMainViewController(viewModel: viewModel)
+        let weatherMainViewController = WeatherMainViewController(viewModel: viewModel, stateViewController: .currentLocationWeather)
         weatherMainViewController.coordinator = self
-        navigator.pushViewController(weatherMainViewController, animated: true)
+        weatherMainViewController.weatherPageViewController = pageViewController
+        let weatherMainViewController2 = WeatherMainViewController(viewModel: viewModel, stateViewController: .emptyWithPlus)
+        weatherMainViewController2.coordinator = self
+        weatherMainViewController2.weatherPageViewController = pageViewController
+        pageViewController.orderedViewControllers = [weatherMainViewController, weatherMainViewController2]
+        navigator.pushViewController(pageViewController, animated: true)
     }
     
     func didFinishWeather() {
