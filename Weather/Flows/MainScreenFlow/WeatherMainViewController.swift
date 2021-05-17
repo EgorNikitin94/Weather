@@ -7,16 +7,6 @@
 
 import UIKit
 
-protocol WeatherMainViewControllerOutput {
-    var onDataLoaded: (()->Void)? { get set }
-    func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
-    func configureHourlyItem(with object: Hourly) -> (time: String, image: UIImage?, temperature: String)?
-    func configureDailyItem(with object: Daily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
-    func getHourlyWeatherArray() -> [Hourly]
-    func getDailyWeatherArray() -> [Daily]
-    func configureCityName() -> String?
-}
-
 enum MainWeatherControllerState {
     case currentLocationWeather
     case emptyWithPlus
@@ -29,7 +19,13 @@ final class WeatherMainViewController: UIViewController {
     
     private var stateViewController: MainWeatherControllerState
     
-    private var viewModel: WeatherMainViewControllerOutput
+    private var viewModelOutput: WeatherMainViewModelOutput
+    
+    var numberOfPages: Int? {
+        didSet {
+            pageControl.numberOfPages = numberOfPages ?? 2
+        }
+    }
     
     var weatherPageViewController: WeatherPageViewController? {
         didSet {
@@ -38,7 +34,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     private lazy var cityNameLabel: UILabel = {
-        $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+        $0.textColor = .white
         $0.font = UIFont(name: "Rubik-Medium", size: 18)
         $0.textAlignment = .right
         let paragraphStyle = NSMutableParagraphStyle()
@@ -62,12 +58,12 @@ final class WeatherMainViewController: UIViewController {
     }(UIButton())
     
     
-    private lazy var pageControl: UIPageControl = {
-        $0.currentPageIndicatorTintColor = .black
-        $0.pageIndicatorTintColor = .blue
+    private lazy var pageControl: CustomPageControl = {
+        $0.currentPageImage = UIImage(named: "CircleFill")!
+        $0.otherPagesImage = UIImage(named: "Circle")!
         $0.addTarget(self, action: #selector(didChangePageControlValue), for: .valueChanged)
         return $0
-    }(UIPageControl())
+    }(CustomPageControl())
     
     private lazy var plusImage: UIImageView = {
         $0.image = UIImage(named: "Plus")
@@ -158,7 +154,7 @@ final class WeatherMainViewController: UIViewController {
     // Mark: - init
     
     init(viewModel: WeatherMainViewModel, stateViewController: MainWeatherControllerState) {
-        self.viewModel = viewModel
+        self.viewModelOutput = viewModel
         self.stateViewController = stateViewController
         super .init(nibName: nil, bundle: nil)
     }
@@ -169,49 +165,59 @@ final class WeatherMainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateData()
+        updateWeatherData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModelOutput.onLoadData?(stateViewController)
         view.backgroundColor = .white
         pageControl.numberOfPages = weatherPageViewController?.orderedViewControllers.count ?? 1
         pageControl.currentPage = 0
-//        if #available(iOS 14.0, *) {
-//            guard let viewControllersArray = weatherPageViewController?.orderedViewControllers else {return}
-//            for (index, _) in viewControllersArray.enumerated() {
-//                if pageControl.currentPage == index {
-//                    let image = UIImage(systemName: "circlebadge.fill")!.withTintColor(.black)
-//                    pageControl.setIndicatorImage(image, forPage: index)
-//                } else {
-//                    let image = UIImage(systemName: "circlebadge")!.withTintColor(.black)
-//                    pageControl.setIndicatorImage(image, forPage: index)
-//                }
-//            }
-//        } else {
-//            pageControl.customPageControl(dotFillColor: .black, dotBorderColor: .black, dotBorderWidth: 1)
-//        }
         setupNavigationBar()
         setupLayout()
-        getData()
+        getWeatherData()
+        getCityName()
     }
     
-    private func getData() {
-        viewModel.onDataLoaded = {
-            self.updateData()
+    private func getWeatherData() {
+        viewModelOutput.onWeatherLoaded = { bool in
+            if bool {
+                self.updateWeatherData()
+            }
         }
     }
     
-    private func updateData() {
-        mainWeatherInformationView.viewConfigure = viewModel.configureMainInformationView()
+    private func getCityName() {
+        viewModelOutput.onCityLoaded = { (bool, name) in
+            if bool {
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineHeightMultiple = 1.03
+                guard let cityName = name else {
+                    return
+                }
+                self.cityNameLabel.attributedText = NSMutableAttributedString(string: cityName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+                self.cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+            }
+        }
+    }
+    
+    private func updateWeatherData() {
+        mainWeatherInformationView.viewConfigure = viewModelOutput.configureMainInformationView()
         hourlyForecastCollectionView.reloadData()
         dailyForecastCollectionView.reloadData()
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.03
-        guard let cityName = viewModel.configureCityName() else {
-            return
-        }
-        cityNameLabel.attributedText = NSMutableAttributedString(string: cityName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+    }
+    
+    private func changeStateVC() {
+        stateViewController = .selectedCityWeather
+        plusImage.isHidden = true
+        mainWeatherInformationView.isHidden = false
+        detailsLabel.isHidden = false
+        hourlyForecastCollectionView.isHidden = false
+        dailyForecastLabel.isHidden = false
+        daysCountLabel.isHidden = false
+        dailyForecastCollectionView.isHidden = false
     }
     
     @objc func plusImageTapped() {
@@ -219,13 +225,14 @@ final class WeatherMainViewController: UIViewController {
         alertController.addTextField { (text) in
             text.placeholder = "название города"
         }
-        let alertActionFind = UIAlertAction(title: "ОК", style: .default) {  (alert) in//[weak self]
-            //guard let self = self else { return }
+        let alertActionFind = UIAlertAction(title: "ОК", style: .default) { [weak self] (alert) in//
+            guard let self = self else { return }
             let cityName = alertController.textFields?[0].text
             if let name = cityName, name != "" {
-                NetworkService.getGeolocationOfCity(cityName: name) { (city) in
-                    print(city)
-                }
+                self.viewModelOutput.onLoadCityWeather?(name)
+                self.changeStateVC()
+                let weatherMainViewController = FlowFactory.makeWeatherMainViewController(coordinator: self.coordinator, stateViewController: .emptyWithPlus, pageViewController: self.weatherPageViewController)
+                self.weatherPageViewController?.appendNewViewController(newViewController: weatherMainViewController)
             }
             
         }
@@ -259,24 +266,6 @@ final class WeatherMainViewController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
-        
-        //        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        //        navigationController?.navigationBar.shadowImage = UIImage()
-        //        navigationController?.navigationBar.isTranslucent = true
-        //
-        //        navigationItem.titleView = navigationTitle
-        //
-        //        let settingsButtonImage = UIImage(named: "Settings")
-        //        let cityButtonImage = UIImage(named: "Mark")
-        //        let resizedCityButtonImage = cityButtonImage?.resized(to: CGSize(width: 20, height: 26))
-        //
-        //        let settingsButton = UIBarButtonItem(image: settingsButtonImage, style: .plain, target: self, action: #selector(openSettings))
-        //        let cityButton = UIBarButtonItem(image: resizedCityButtonImage, style: .plain, target: self, action: #selector(addCity))
-        //        navigationItem.leftBarButtonItem = settingsButton
-        //        navigationItem.rightBarButtonItem = cityButton
-        //        navigationItem.leftBarButtonItem?.tintColor = .black
-        //        navigationItem.rightBarButtonItem?.tintColor = .black
-        //
     }
     
     private func setupLayout() {
@@ -378,28 +367,28 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == hourlyForecastCollectionView {
-            return viewModel.getHourlyWeatherArray().count
+            return viewModelOutput.getHourlyWeatherArray().count
         }
-        return viewModel.getDailyWeatherArray().count
+        return viewModelOutput.getDailyWeatherArray().count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == hourlyForecastCollectionView {
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: HourlyForecastCollectionViewCell.self), for: indexPath) as! HourlyForecastCollectionViewCell
-            let hurlyWeatherArray = viewModel.getHourlyWeatherArray()
+            let hurlyWeatherArray = viewModelOutput.getHourlyWeatherArray()
             let hourlyWeather = hurlyWeatherArray[indexPath.item]
             if indexPath.item == 1 {
                 item.prepareForReuse()
                 item.configureSelectedItem()
             }
-            item.configure = viewModel.configureHourlyItem(with: hourlyWeather)
+            item.configure = viewModelOutput.configureHourlyItem(with: hourlyWeather)
             return item
         }
         
         let item = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DailyForecastCollectionViewCell.self), for: indexPath) as! DailyForecastCollectionViewCell
-        let dailyWeatherArray = viewModel.getDailyWeatherArray()
+        let dailyWeatherArray = viewModelOutput.getDailyWeatherArray()
         let dailyWeather = dailyWeatherArray[indexPath.item]
-        item.configure = viewModel.configureDailyItem(with: dailyWeather)
+        item.configure = viewModelOutput.configureDailyItem(with: dailyWeather)
         return item
     }
     
@@ -427,14 +416,11 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
 
 extension WeatherMainViewController: WeatherPageViewControllerDelegate {
     
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
-                                   didUpdatePageCount count: Int) {
+    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageCount count: Int) {
         pageControl.numberOfPages = count
     }
     
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController,
-                                   didUpdatePageIndex index: Int) {
+    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int) {
         pageControl.currentPage = index
     }
-    
 }

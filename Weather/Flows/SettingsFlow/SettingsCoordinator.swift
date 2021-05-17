@@ -25,7 +25,7 @@ class SettingsCoordinator: Coordinator {
         navigator.pushViewController(settingsViewController, animated: true)
     }
     
-    func didFinishWeather() {
+    func didFinishSettings() {
         parentCoordinator.childDidFinish(self)
     }
     

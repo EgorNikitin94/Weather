@@ -7,21 +7,35 @@
 
 import UIKit
 
-final class WeatherMainViewModel: WeatherMainViewControllerOutput {
+protocol WeatherMainViewModelOutput {
+    var onWeatherLoaded: ((Bool)->Void)? { get set }
+    var onCityLoaded: ((Bool, String?)->Void)? { get set }
+    var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
+    var onLoadCityWeather: ((String)->Void)? {get set}
+    func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
+    func configureHourlyItem(with object: Hourly) -> (time: String, image: UIImage?, temperature: String)?
+    func configureDailyItem(with object: Daily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
+    func getHourlyWeatherArray() -> [Hourly]
+    func getDailyWeatherArray() -> [Daily]
+    func configureCityName() -> String?
+}
+
+
+final class WeatherMainViewModel: WeatherMainViewModelOutput {
     
-    var onDataLoaded: (()->Void)?
+    var onWeatherLoaded: ((Bool)->Void)?
     
-    var onCityNameLoad: ((String)->Void)?
+    var onCityLoaded: ((Bool, String?)->Void)?
     
-    private var weatherDataStorage: WeatherData? {
-        didSet {
-            onDataLoaded?()
-        }
+    lazy var onLoadData: ((MainWeatherControllerState)->Void)? = { [weak self] state in
+        self?.loadWeatherData(stateVC: state)
     }
     
-    init() {
-        loadWeatherData()
+    lazy var onLoadCityWeather: ((String)->Void)? = { [weak self] cityName in
+        self?.loadCityWeather(cityName: cityName)
     }
+    
+    var weatherDataStorage: WeatherData?
     
     public func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
         guard let object = weatherDataStorage else {
@@ -140,12 +154,31 @@ final class WeatherMainViewModel: WeatherMainViewControllerOutput {
         }
     }
     
-    private func loadWeatherData() {
-        LocationManager.sharedInstance.getCurrentLocation { (locationCoordinate) in
+    private func loadCityWeather(cityName: String) {
+        NetworkService.getGeolocationOfCity(cityName: cityName) { [weak self] (city) in
+            if city != nil, let cityLocation = city?.location {
+                self?.onCityLoaded?(true, city?.fullName)
+                self?.loadWeather(locationCoordinate: cityLocation, isNeedLoadCityName: false, city: city)
+            } else {
+                self?.onCityLoaded?(false, city?.fullName)
+            }
             
-            NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
+        }
+    }
+    
+    private func loadWeather(locationCoordinate: LocationCoordinate, isNeedLoadCityName: Bool, city: City? = nil) {
+        NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
+            if let weatherData = weatherData {
                 self?.weatherDataStorage = weatherData
-                self?.loadCityName(location: locationCoordinate)
+                self?.onWeatherLoaded?(true)
+                if isNeedLoadCityName {
+                    self?.loadCityName(location: locationCoordinate)
+                }
+                if city != nil {
+                    self?.weatherDataStorage?.city = city
+                }
+            } else {
+                self?.onWeatherLoaded?(false)
             }
             
         }
@@ -153,9 +186,32 @@ final class WeatherMainViewModel: WeatherMainViewControllerOutput {
     
     private func loadCityName(location: LocationCoordinate) {
         NetworkService.getNameOfCity(location: location) { [weak self] (city) in
-            self?.weatherDataStorage?.city = city
+            if let city = city {
+                print(city)
+                self?.weatherDataStorage?.city = city
+                self?.onCityLoaded?(true, city.fullName)
+            } else {
+                self?.onCityLoaded?(false, city?.fullName)
+            }
         }
     }
+    
+    private func loadWeatherData(stateVC: MainWeatherControllerState) {
+        switch stateVC {
+        case .currentLocationWeather:
+            LocationManager.sharedInstance.getCurrentLocation { (locationCoordinate) in
+                self.loadWeather(locationCoordinate: locationCoordinate, isNeedLoadCityName: true)
+            }
+        case .selectedCityWeather:
+            guard let locationCoordinate = self.weatherDataStorage?.city?.location else {
+                break
+            }
+            loadWeather(locationCoordinate: locationCoordinate, isNeedLoadCityName: false)
+        case .emptyWithPlus: break
+        }
+        
+    }
+
     
     private func convertTemperature(_ temperature: Double) -> Double {
         if UserDefaults.standard.bool(forKey:UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue) {

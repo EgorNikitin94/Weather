@@ -81,6 +81,10 @@ final class OnboardingViewController: UIViewController {
         return $0
     }(UILabel())
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        //coordinator?.didFinishOnboarding()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,6 +93,8 @@ final class OnboardingViewController: UIViewController {
         setupLayout()
         LocationManager.sharedInstance.requestAuthorization()
     }
+    
+    
     
     @objc private func agreeUseGeolocation() {
         UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)

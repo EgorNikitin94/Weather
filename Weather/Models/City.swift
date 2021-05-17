@@ -57,7 +57,7 @@ struct GeoObject: Decodable {
         guard let latitudeUnwrapped = latitude, let longitudeUnwrapped = longitude else {
             return nil
         }
-        return LocationCoordinate(latitude: latitudeUnwrapped, longitude: longitudeUnwrapped)
+        return LocationCoordinate(latitude: longitudeUnwrapped, longitude: latitudeUnwrapped)
     }
 }
 
@@ -84,6 +84,7 @@ struct AddressDetails: Decodable {
         case country = "Country"
     }
 }
+
 struct Country: Decodable {
     let countryName: String
     let administrativeArea: AdministrativeArea?
@@ -97,9 +98,11 @@ struct Country: Decodable {
 struct AdministrativeArea: Decodable {
     let subAdministrativeArea: SubAdministrativeArea?
     let locality: Locality?
+    let administrativeAreaName: String?
     
     enum CodingKeys: String, CodingKey {
         case subAdministrativeArea = "SubAdministrativeArea"
+        case administrativeAreaName = "AdministrativeAreaName"
         case locality = "Locality"
     }
 }

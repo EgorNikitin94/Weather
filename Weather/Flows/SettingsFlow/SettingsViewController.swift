@@ -46,6 +46,7 @@ final class SettingsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        coordinator?.didFinishSettings()
         navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
     }
