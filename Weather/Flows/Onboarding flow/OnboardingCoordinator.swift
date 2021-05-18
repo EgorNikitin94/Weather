@@ -41,7 +41,7 @@ class OnboardingCoordinator: Coordinator {
     }
     
     func didFinishOnboarding() {
-        parentCoordinator.childDidFinish(self)
+        //parentCoordinator.childDidFinish(self)
     }
     
     func childDidFinish(_ child: Coordinator?) {

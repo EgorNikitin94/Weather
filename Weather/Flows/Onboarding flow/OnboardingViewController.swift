@@ -83,7 +83,7 @@ final class OnboardingViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //coordinator?.didFinishOnboarding()
+        coordinator?.didFinishOnboarding()
     }
     
     override func viewDidLoad() {
