@@ -93,19 +93,19 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(descriptionWeatherLabel)
         contentView.addSubview(temperatureLabel)
         contentView.addSubview(chevronImage)
-
+        
         dateLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(6)
             make.leading.equalToSuperview().offset(10)
         }
-
+        
         weatherImage.snp.makeConstraints { (make) in
             make.bottom.equalToSuperview().offset(-9.24)
             make.leading.equalToSuperview().offset(10)
             make.width.equalTo(15)
             make.height.equalTo(17.08)
         }
-
+        
         humidityLabel.snp.makeConstraints { (make) in
             make.leading.equalTo(weatherImage.snp.trailing).offset(5)
             make.centerY.equalTo(weatherImage)
@@ -115,13 +115,13 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
             make.leading.equalToSuperview().offset(66)
             make.centerY.equalToSuperview()
         }
-
+        
         temperatureLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-26)
-
+            
         }
-
+        
         chevronImage.snp.makeConstraints { (make) in
             make.trailing.equalToSuperview().offset(-10)
             make.centerY.equalToSuperview()

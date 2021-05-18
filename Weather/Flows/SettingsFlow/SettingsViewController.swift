@@ -50,7 +50,7 @@ final class SettingsViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
     }
-
+    
     
     private func onSetupButtonTapped() {
         if let settingsCoordinator = coordinator {

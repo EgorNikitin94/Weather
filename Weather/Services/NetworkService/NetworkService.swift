@@ -46,6 +46,33 @@ final class NetworkService {
         }
     }
     
+    private static func selectCityName(data: CityData) -> String? {
+        
+        let administrativeAreaName = data.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.administrativeAreaName
+        
+        let localityNameOptional = data.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.locality?.localityName
+        
+        let localityNameOptionalSub = data.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.subAdministrativeArea?.locality?.localityName
+        
+        
+        if localityNameOptional != nil {
+            return localityNameOptional
+        } else if localityNameOptionalSub != nil {
+            return localityNameOptionalSub
+        } else {
+            return administrativeAreaName
+        }
+        
+    }
+    
+    private static func makeFullCityName(cityName: String, countryName: String) -> String {
+        if countryName == "Соединённые Штаты Америки" {
+            return "\(cityName),США"
+        } else {
+            return "\(cityName),\(countryName)"
+        }
+    }
+    
     static func getGeolocationOfCity(cityName: String, completion: @escaping ((City?) -> Void)) {
         
         let apiString =  "https://geocode-maps.yandex.ru/1.x/?apikey=\(ApiKeys.yandexApi.rawValue)&geocode=\(cityName)&format=json&lang=ru_RU"
@@ -57,23 +84,9 @@ final class NetworkService {
                 do {
                     let serverAnswer = try JSONDecoder().decode(CityData.self, from: data)
                     
-                    let administrativeAreaName = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.administrativeAreaName
                     
-                    let localityNameOptional = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.locality?.localityName
+                    let localityNameOptionalContainer: String? = selectCityName(data: serverAnswer)
                     
-                    let localityNameOptionalSub = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.subAdministrativeArea?.locality?.localityName
-                    
-                    var localityNameOptionalContainer: String? = nil
-                    
-                    var name = ""
-                    
-                    if localityNameOptional != nil {
-                        localityNameOptionalContainer = localityNameOptional
-                    } else if localityNameOptionalSub != nil {
-                        localityNameOptionalContainer = localityNameOptionalSub
-                    } else {
-                        localityNameOptionalContainer = administrativeAreaName
-                    }
                     
                     guard let coordinate = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.getCoordinate(),
                           let cityName = localityNameOptionalContainer,
@@ -81,13 +94,9 @@ final class NetworkService {
                         return
                     }
                     
-                    if countryName == "Соединённые Штаты Америки" {
-                        name = "\(cityName),США"
-                    } else {
-                        name = "\(cityName),\(countryName)"
-                    }
+                    let fullName = makeFullCityName(cityName: cityName, countryName: countryName)
                     
-                    completion(City(location: coordinate, fullName: name))
+                    completion(City(location: coordinate, fullName: fullName))
                     
                 } catch let error as NSError {
                     completion(nil)
@@ -110,37 +119,17 @@ final class NetworkService {
                 do {
                     let serverAnswer = try JSONDecoder().decode(CityData.self, from: data)
                     
-                    let administrativeAreaName = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.administrativeAreaName
-                    
-                    let localityNameOptional = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.locality?.localityName
-                    
-                    let localityNameOptionalSub = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.subAdministrativeArea?.locality?.localityName
-                    
-                    var localityNameOptionalContainer: String? = nil
-                    
-                    var name = ""
-                    
-                    if localityNameOptional != nil {
-                        localityNameOptionalContainer = localityNameOptional
-                    } else if localityNameOptionalSub != nil {
-                        localityNameOptionalContainer = localityNameOptionalSub
-                    } else {
-                        localityNameOptionalContainer = administrativeAreaName
-                    }
+                    let localityNameOptionalContainer: String? = selectCityName(data: serverAnswer)
                     
                     guard let cityName = localityNameOptionalContainer,
                           let countryName = serverAnswer.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.countryName else  {
                         return
                     }
                     
-                    if countryName == "Соединённые Штаты Америки" {
-                        name = "\(cityName),США"
-                    } else {
-                        name = "\(cityName),\(countryName)"
-                    }
+                    let fullName = makeFullCityName(cityName: cityName, countryName: countryName)
                     
-                    completion(City(location: location, fullName: name))
-
+                    completion(City(location: location, fullName: fullName))
+                    
                 } catch let error as NSError {
                     completion(nil)
                     print(error.debugDescription)

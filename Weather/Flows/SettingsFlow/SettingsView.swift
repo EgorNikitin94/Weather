@@ -88,7 +88,7 @@ final class SettingsView: UIView {
     }
     
     @objc private func setupButtonTapped() {
-            onSetupButtonTapped?()
+        onSetupButtonTapped?()
     }
     
     override func layoutSubviews() {

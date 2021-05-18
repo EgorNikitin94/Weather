@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class OnboardingViewController: UIViewController {
-
+    
     var coordinator: OnboardingCoordinator?
     
     private lazy var womanWithUmbrellaImageView: UIImageView = {
@@ -121,19 +121,19 @@ final class OnboardingViewController: UIViewController {
         view.addSubview(changeSelectionLabel)
         view.addSubview(useMyGeolocationButton)
         view.addSubview(doNotUseMyGeolocationLabel)
-
+        
         womanWithUmbrellaImageView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(62)
             make.leading.equalToSuperview().offset(35.5)
             make.trailing.equalToSuperview().offset(-35)
         }
-
+        
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(womanWithUmbrellaImageView.snp.bottom).offset(30)
             make.leading.equalToSuperview().offset(19)
             make.trailing.equalToSuperview().offset(-34)
         }
-
+        
         descriptionLabel.snp.makeConstraints { (make) in
             make.top.equalTo(titleLabel.snp.bottom).offset(30)
             make.leading.equalToSuperview().offset(19)
@@ -145,14 +145,14 @@ final class OnboardingViewController: UIViewController {
             make.leading.equalToSuperview().offset(19)
             make.trailing.equalToSuperview().offset(-34)
         }
-
+        
         useMyGeolocationButton.snp.makeConstraints { (make) in
             make.top.equalTo(changeSelectionLabel.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(18)
             make.trailing.equalToSuperview().offset(-17)
             make.height.equalTo(40)
         }
-
+        
         doNotUseMyGeolocationLabel.snp.makeConstraints { (make) in
             make.top.equalTo(useMyGeolocationButton.snp.bottom).offset(25)
             make.trailing.equalToSuperview().offset(-17)
@@ -160,6 +160,6 @@ final class OnboardingViewController: UIViewController {
         }
         
     }
-
+    
 }
 

@@ -21,14 +21,14 @@ final class CustomSegmentedControl: UIView {
     
     private lazy var leftView: UIView = {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapLeftSide))
-//        $0.isUserInteractionEnabled = true
+        //        $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(tapGestureRecognizer)
         return $0
     }(UIView())
     
     private lazy var rightView: UIView = {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapRightSide))
-//        $0.isUserInteractionEnabled = true
+        //        $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(tapGestureRecognizer)
         return $0
     }(UIView())
