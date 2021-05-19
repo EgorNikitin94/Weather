@@ -368,6 +368,7 @@ final class PartOfDayTableViewCell: UITableViewCell {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.height.equalTo(0.5)
+            make.bottom.equalToSuperview().offset(-12)
         }
     }
     
