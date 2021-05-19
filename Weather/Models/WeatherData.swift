@@ -121,6 +121,5 @@ struct FeelsLike: Decodable {
 }
 
 struct Temp: Decodable {
-    let min: Double
-    let max: Double
+    let day, min, max, night: Double
 }

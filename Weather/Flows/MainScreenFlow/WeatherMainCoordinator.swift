@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WeatherMainCoordinator: Coordinator {
+final class WeatherMainCoordinator: Coordinator {
     
     unowned var parentCoordinator: Coordinator
     
@@ -33,6 +33,21 @@ class WeatherMainCoordinator: Coordinator {
         settingsCoordinator.navigator = navigator
         childCoordinators.append(settingsCoordinator)
         settingsCoordinator.start()
+    }
+    
+    func pushHourlyWeatherViewController() {
+        let hourlyWeatherCoordinator = HourlyWeatherCoordinator(controller: navigator, parent: self)
+        hourlyWeatherCoordinator.navigator = navigator
+        childCoordinators.append(hourlyWeatherCoordinator)
+        hourlyWeatherCoordinator.start()
+    }
+    
+    func pushDailyWeatherViewController(weatherData: WeatherData?) {
+        let dailyWeatherCoordinator = DailyWeatherCoordinator(controller: navigator, parent: self)
+        dailyWeatherCoordinator.weatherData = weatherData
+        dailyWeatherCoordinator.navigator = navigator
+        childCoordinators.append(dailyWeatherCoordinator)
+        dailyWeatherCoordinator.start()
     }
     
     func childDidFinish(_ child: Coordinator?) {

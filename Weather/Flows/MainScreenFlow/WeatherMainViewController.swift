@@ -153,7 +153,7 @@ final class WeatherMainViewController: UIViewController {
     
     // Mark: - init
     
-    init(viewModel: WeatherMainViewModel, stateViewController: MainWeatherControllerState) {
+    init(viewModel: WeatherMainViewModelOutput, stateViewController: MainWeatherControllerState) {
         self.viewModelOutput = viewModel
         self.stateViewController = stateViewController
         super .init(nibName: nil, bundle: nil)
@@ -255,7 +255,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func detailsLabelTapped() {
-        print("did Tap")
+        coordinator?.pushHourlyWeatherViewController()
     }
     
     @objc private func daysCountLabelTapped() {
@@ -402,7 +402,12 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //
+        if collectionView == hourlyForecastCollectionView {
+            //
+        } else if collectionView == dailyForecastCollectionView {
+            coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

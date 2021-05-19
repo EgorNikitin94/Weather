@@ -8,6 +8,7 @@
 import UIKit
 
 protocol WeatherMainViewModelOutput {
+    var weatherDataStorage: WeatherData? { get }
     var onWeatherLoaded: ((Bool)->Void)? { get set }
     var onCityLoaded: ((Bool, String?)->Void)? { get set }
     var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
