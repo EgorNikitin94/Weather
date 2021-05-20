@@ -11,26 +11,8 @@ protocol DailyWeatherViewModelOutput {
     func getDailyWeatherArray() -> [Daily]
     func configureDayItem(with object: Daily) -> String?
     func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day?
+    func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase?
 }
-
-enum PartOfDay: String {
-    case day = "День"
-    case night = "Ночь"
-}
-
-struct Day {
-    let dayPart: NSMutableAttributedString
-    let weatherImage: UIImage?
-    let temperature: NSMutableAttributedString
-    let temperatureDescription: NSMutableAttributedString
-    let thermometerImage: UIImage?
-    let feelsTemperature: NSMutableAttributedString
-    let windSpeed: NSMutableAttributedString
-    let uv: NSMutableAttributedString
-    let precipitation:NSMutableAttributedString
-    let cloudiness: NSMutableAttributedString
-}
-
 
 final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     
@@ -56,6 +38,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         let localData = TimeInterval(weather.timezoneOffset - weather.moscowTimeOffset)
         let date = NSDate(timeIntervalSince1970: TimeInterval(object.dt) + localData)
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd/MM E"
         let dayDate = formatter.string(from: date as Date).uppercased()
         
@@ -86,9 +69,9 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
             let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike.day))
             let feelsTemperature = NSMutableAttributedString(string: feelsTemperatureValueString + "º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
-            let windSpeedValueString = String(format: "%.0f", convertTemperature(object.windSpeed))
+            let windSpeedValueString = convertSpeed(speed: object.windSpeed)
             let windDirection = Double(object.windDeg).direction
-            let windSpeed = NSMutableAttributedString(string: "\(windSpeedValueString)\(windDirection)", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            let windSpeed = NSMutableAttributedString(string: "\(windSpeedValueString) \(windDirection)", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             let uvValueString = String(format: "%.0f", convertTemperature(object.uvi))
             let uvDescriptionString = setupUvDescription(uv: object.uvi)
@@ -125,7 +108,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
             let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike.night))
             let feelsTemperature = NSMutableAttributedString(string: feelsTemperatureValueString + "º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
-            let windSpeedValueString = String(format: "%.0f", convertTemperature(object.windSpeed))
+            let windSpeedValueString = convertSpeed(speed: object.windSpeed)
             let windDirection = Double(object.windDeg).direction
             let windSpeed = NSMutableAttributedString(string: "\(windSpeedValueString)\(windDirection)", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
@@ -189,6 +172,100 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
             return UIImage(named: "Cloud")
         }
     }
+    
+    func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase? {
+        
+        let moonPhase = getAttributedStringMoonPhase(moonPhase: object.moonPhase)
+        guard let dayDuration = getAttributedStringTime(time: object.sunset - object.sunrise, isLongTime: true) else {return nil}
+        guard let nightDuration = getAttributedStringTime(time: object.moonset - object.moonrise, isLongTime: true) else {return nil}
+        guard let sunriseTime = getAttributedStringTime(time: object.sunrise, isLongTime: false) else {return nil}
+        guard let sunsetTime = getAttributedStringTime(time: object.sunset, isLongTime: false) else {return nil}
+        guard let moonriseTime = getAttributedStringTime(time: object.moonrise, isLongTime: false) else {return nil}
+        guard let moonsetTime = getAttributedStringTime(time: object.moonset, isLongTime: false) else {return nil}
+        
+        return SunAndMoonPhase(moonPhase: moonPhase,
+                               dayDuration: dayDuration,
+                               nightDuration: nightDuration,
+                               sunriseTime: sunriseTime,
+                               sunsetTime: sunsetTime,
+                               moonriseTime: moonriseTime,
+                               moonsetTime: moonsetTime)
+    }
+    
+    private func getAttributedStringMoonPhase(moonPhase: Double) -> NSMutableAttributedString {
+        
+        var text = ""
+        
+        switch moonPhase {
+        case 0, 1:
+            text = "Новолуние"
+        case 0..<0.25:
+            text = "Молодая луна"
+        case 0.25:
+            text = "Первая четверть луны"
+        case 0.25..<0.5:
+            text = "Прибывающая луна"
+        case 0.5:
+            text = "Полнолуние"
+        case 0.5..<0.75:
+            text = "Убывающая луна"
+        case 0.75:
+            text = "Последняя четверть луны"
+        case 0.75..<1:
+            text = "Старая луна"
+        default:
+            text = ""
+        }
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        
+        paragraphStyle.lineHeightMultiple = 1.15
+        
+        return NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+    }
+    
+    private func getAttributedStringTime(time: Int, isLongTime: Bool) -> NSMutableAttributedString? {
+        
+        guard let weatherData = weatherData else { return nil}
+        
+        let localData = TimeInterval(weatherData.timezoneOffset - weatherData.moscowTimeOffset)
+        
+        let date = NSDate(timeIntervalSince1970: TimeInterval(time) + localData)
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        
+        paragraphStyle.lineHeightMultiple = 1.05
+        
+        if isLongTime {
+            let hourFormatter = DateFormatter()
+            let minuteFormatter = DateFormatter()
+            let amPmFormatter = DateFormatter()
+            hourFormatter.dateFormat = UserDefaults.standard.bool(forKey:UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue) ? "hh" : "HH"
+            minuteFormatter.dateFormat = "mm"
+            amPmFormatter.dateFormat = "a"
+            let stringDateHour = hourFormatter.string(from: date as Date)
+            let stringDateMinute = minuteFormatter.string(from: date as Date)
+            let stringDateAmPm = amPmFormatter.string(from: date as Date)
+            
+            guard UserDefaults.standard.bool(forKey:UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue) else {
+                let fullString = stringDateHour + "ч " + stringDateMinute + " мин"
+                return NSMutableAttributedString(string: fullString, attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            }
+            
+            let fullString = stringDateHour + "ч " + stringDateMinute + " мин " + stringDateAmPm
+            return NSMutableAttributedString(string: fullString, attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            
+        } else {
+            let shortFormatter = DateFormatter()
+            shortFormatter.dateFormat = UserDefaults.standard.bool(forKey:UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue) ? "hh:mm a" : "HH:mm"
+            let stringDate = shortFormatter.string(from: date as Date)
+            return NSMutableAttributedString(string: stringDate, attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        }
+        
+    }
+    
+    
     
     private func convertTemperature(_ temperature: Double) -> Double {
         if UserDefaults.standard.bool(forKey:UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue) {

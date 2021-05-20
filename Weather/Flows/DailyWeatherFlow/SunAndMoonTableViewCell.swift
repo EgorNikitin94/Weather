@@ -9,6 +9,18 @@ import UIKit
 
 final class SunAndMoonTableViewCell: UITableViewCell {
     
+    var configure: SunAndMoonPhase? {
+        didSet {
+            moonPhaseLabel.attributedText = configure?.moonPhase
+            dayDurationLabel.attributedText = configure?.dayDuration
+            nightDurationLabel.attributedText = configure?.nightDuration
+            sunriseTimeLabel.attributedText = configure?.sunriseTime
+            moonriseTimeLabel.attributedText = configure?.moonriseTime
+            sunsetTimeLabel.attributedText = configure?.sunsetTime
+            moonsetTimeLabel.attributedText = configure?.moonsetTime
+        }
+    }
+    
     private lazy var sunAndMoonLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 18)
@@ -26,10 +38,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     private lazy var moonPhaseLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 14)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.15
         $0.textAlignment = .right
-        $0.attributedText = NSMutableAttributedString(string: "Полнолуние", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -41,10 +50,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     private lazy var dayDurationLabel: UILabel = {
         $0.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "14ч 27 мин", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -56,10 +62,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     private lazy var nightDurationLabel: UILabel = {
         $0.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "14ч 27 мин", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -68,25 +71,25 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         return $0
     }(UIView())
     
-    private lazy var firstHorizontalDividerView: UIImageView = {
-        $0.image = UIImage(named: "DottedLine")
+    private lazy var firstHorizontalDividerView: UIView = {
+        $0.backgroundColor = AppColors.sharedInstance.dividerColor
         return $0
-    }(UIImageView())
+    }(UIView())
     
-    private lazy var secondHorizontalDividerView: UIImageView = {
-        $0.image = UIImage(named: "DottedLine")
+    private lazy var secondHorizontalDividerView: UIView = {
+        $0.backgroundColor = AppColors.sharedInstance.dividerColor
         return $0
-    }(UIImageView())
+    }(UIView())
     
-    private lazy var thirdHorizontalDividerView: UIImageView = {
-        $0.image = UIImage(named: "DottedLine")
+    private lazy var thirdHorizontalDividerView: UIView = {
+        $0.backgroundColor = AppColors.sharedInstance.dividerColor
         return $0
-    }(UIImageView())
+    }(UIView())
     
-    private lazy var fourthHorizontalDividerView: UIImageView = {
-        $0.image = UIImage(named: "DottedLine")
+    private lazy var fourthHorizontalDividerView: UIView = {
+        $0.backgroundColor = AppColors.sharedInstance.dividerColor
         return $0
-    }(UIImageView())
+    }(UIView())
     
     private lazy var daySunriseLabel: UILabel = {
         $0.textColor = UIColor(red: 0.604, green: 0.587, blue: 0.587, alpha: 1)
@@ -101,10 +104,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     private let sunriseTimeLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "05:19", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -121,30 +121,25 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     private let moonriseTimeLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "05:19", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
     private lazy var daySunsetLabel: UILabel = {
         $0.textColor = UIColor(red: 0.604, green: 0.587, blue: 0.587, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 14)
+        $0.textAlignment = .center
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.15
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "Восход", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "Заход", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
     private let sunsetTimeLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "19:46", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -154,17 +149,14 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.15
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "Восход", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        $0.attributedText = NSMutableAttributedString(string: "Заход", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
     private let moonsetTimeLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
         $0.textAlignment = .center
-        $0.attributedText = NSMutableAttributedString(string: "19:46", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
 
@@ -231,7 +223,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         
         sunImage.snp.makeConstraints { (make) in
             make.leading.equalToSuperview().offset(19)
-            make.top.equalTo(20)
+            make.centerY.equalTo(dayDurationLabel)
             make.width.equalTo(20)
             make.height.equalTo(20)
         }
@@ -249,14 +241,14 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         }
         
         nightDurationLabel.snp.makeConstraints { (make) in
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-15)
             make.centerY.equalTo(moonImage)
         }
         
         firstHorizontalDividerView.snp.makeConstraints { (make) in
             make.top.equalTo(dayDurationLabel.snp.bottom).offset(12)
             make.leading.equalToSuperview()
-            make.trailing.equalTo(verticalDividerView.snp.leading).offset(12)
+            make.trailing.equalTo(verticalDividerView.snp.leading).offset(-12)
             make.height.equalTo(0.5)
         }
         
@@ -290,12 +282,12 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         thirdHorizontalDividerView.snp.makeConstraints { (make) in
             make.top.equalTo(sunriseTimeLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview()
-            make.trailing.equalTo(verticalDividerView.snp.leading).offset(12)
+            make.trailing.equalTo(verticalDividerView.snp.leading).offset(-12)
             make.height.equalTo(0.5)
         }
         
         fourthHorizontalDividerView.snp.makeConstraints { (make) in
-            make.centerY.equalTo(firstHorizontalDividerView)
+            make.centerY.equalTo(thirdHorizontalDividerView)
             make.leading.equalTo(verticalDividerView.snp.trailing).offset(12)
             make.trailing.equalToSuperview()
             make.height.equalTo(0.5)

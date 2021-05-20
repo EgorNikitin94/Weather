@@ -11,16 +11,15 @@ final class DayCollectionViewCell: UICollectionViewCell {
     
     var configure: String? {
         didSet {
-            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.03
+            dateLabel.attributedText = NSMutableAttributedString(string: configure ?? "", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
     
     private lazy var dateLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 18)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.03
-        $0.attributedText = NSMutableAttributedString(string: "17/04 ПТ", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     

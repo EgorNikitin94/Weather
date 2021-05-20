@@ -20,7 +20,7 @@ final class PartOfDayTableViewCell: UITableViewCell {
             windInfoLabel.attributedText = configure?.windSpeed
             uvInfoLabel.attributedText = configure?.uv
             precipitationInfoLabel.attributedText = configure?.precipitation
-            cloudinessLabel.attributedText = configure?.cloudiness
+            cloudinessInfoLabel.attributedText = configure?.cloudiness
         }
     }
     
@@ -258,7 +258,7 @@ final class PartOfDayTableViewCell: UITableViewCell {
         }
         
         feelsLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(temperatureLabel.snp.bottom).offset(28)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(28)
             make.leading.equalTo(feelsImage.snp.trailing).offset(15)
         }
         

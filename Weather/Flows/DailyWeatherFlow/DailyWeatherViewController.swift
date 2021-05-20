@@ -58,6 +58,14 @@ final class DailyWeatherViewController: UIViewController {
     
     private let tableView = UITableView(frame: .zero, style: .plain)
     
+    private var partOfDayReuseID: String {
+        return String(describing: PartOfDayTableViewCell.self)
+    }
+    
+    private var sunAndMoonReuseId: String {
+        return String(describing: SunAndMoonTableViewCell.self)
+    }
+    
     private lazy var bottomSafeArea: UIView = {
         $0.backgroundColor = AppColors.sharedInstance.accentBlue
         return $0
@@ -110,8 +118,8 @@ final class DailyWeatherViewController: UIViewController {
         tableView.delegate = self
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
-        //            tableView.register(PeriodsOfTimeTableViewCell.self, forCellReuseIdentifier: periodsOfTimeReuseID)
-        //            tableView.register(SunAndMoonTableViewCell.self, forCellReuseIdentifier: sunAndMoonReuseId)
+        tableView.register(PartOfDayTableViewCell.self, forCellReuseIdentifier: partOfDayReuseID)
+        tableView.register(SunAndMoonTableViewCell.self, forCellReuseIdentifier: sunAndMoonReuseId)
     }
     
     
@@ -157,8 +165,8 @@ final class DailyWeatherViewController: UIViewController {
         
         tableView.snp.makeConstraints { (make) in
             make.top.equalTo(daysCollectionView.snp.bottom).offset(20)
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().offset(-15)
             make.bottom.equalTo(bottomSafeArea.snp.top)
         }
         
@@ -217,12 +225,50 @@ extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionVi
 
 extension DailyWeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        switch indexPath.section {
+        case 0:
+            let cell: PartOfDayTableViewCell = tableView.dequeueReusableCell(withIdentifier: partOfDayReuseID, for: indexPath) as! PartOfDayTableViewCell
+            let daysArray = viewModelOutput.getDailyWeatherArray()
+            let day = daysArray[1]
+            cell.configure = viewModelOutput.configurePartOfDayCell(with: day, partOfDay: .day)
+            cell.selectionStyle = .none
+            return cell
+        case 1:
+            let cell: PartOfDayTableViewCell = tableView.dequeueReusableCell(withIdentifier: partOfDayReuseID, for: indexPath) as! PartOfDayTableViewCell
+            let daysArray = viewModelOutput.getDailyWeatherArray()
+            let day = daysArray[1]
+            cell.configure = viewModelOutput.configurePartOfDayCell(with: day, partOfDay: .night)
+            cell.selectionStyle = .none
+            return cell
+        case 2:
+            let cell: SunAndMoonTableViewCell = tableView.dequeueReusableCell(withIdentifier: sunAndMoonReuseId, for: indexPath) as! SunAndMoonTableViewCell
+            let daysArray = viewModelOutput.getDailyWeatherArray()
+            let day = daysArray[1]
+            cell.configure = viewModelOutput.configureSunAndMoonCell(with: day)
+            cell.selectionStyle = .none
+            return cell
+        default:
+            return UITableViewCell()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 12
     }
     
     
