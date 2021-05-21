@@ -8,6 +8,7 @@
 import UIKit
 
 protocol DailyWeatherViewModelOutput {
+    func configureCityName() -> NSMutableAttributedString?
     func getDailyWeatherArray() -> [Daily]
     func configureDayItem(with object: Daily) -> String?
     func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day?
@@ -22,7 +23,16 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         self.weatherData = weatherData
     }
     
-    func getDailyWeatherArray() -> [Daily] {
+    public func configureCityName() -> NSMutableAttributedString? {
+        guard let city = weatherData?.city else {
+            return nil
+        }
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.03
+        return NSMutableAttributedString(string: city.fullName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+    }
+    
+    public func getDailyWeatherArray() -> [Daily] {
         guard let weather = weatherData else {
             return []
         }
@@ -30,7 +40,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         return weather.daily
     }
     
-    func configureDayItem(with object: Daily) -> String? {
+    public func configureDayItem(with object: Daily) -> String? {
         
         guard let weather = weatherData else {
             return nil
@@ -45,7 +55,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         return dayDate
     }
     
-    func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day? {
+    public func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day? {
         
         let paragraphStyle = NSMutableParagraphStyle()
         
@@ -110,7 +120,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
             
             let windSpeedValueString = convertSpeed(speed: object.windSpeed)
             let windDirection = Double(object.windDeg).direction
-            let windSpeed = NSMutableAttributedString(string: "\(windSpeedValueString)\(windDirection)", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            let windSpeed = NSMutableAttributedString(string: "\(windSpeedValueString) \(windDirection)", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             let uvValueString = String(format: "%.0f", convertTemperature(object.uvi))
             let uvDescriptionString = setupUvDescription(uv: object.uvi)
@@ -173,7 +183,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         }
     }
     
-    func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase? {
+    public func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase? {
         
         let moonPhase = getAttributedStringMoonPhase(moonPhase: object.moonPhase)
         guard let dayDuration = getAttributedStringTime(time: object.sunset - object.sunrise, isLongTime: true) else {return nil}

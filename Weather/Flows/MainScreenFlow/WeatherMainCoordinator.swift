@@ -42,10 +42,11 @@ final class WeatherMainCoordinator: Coordinator {
         hourlyWeatherCoordinator.start()
     }
     
-    func pushDailyWeatherViewController(weatherData: WeatherData?) {
+    func pushDailyWeatherViewController(weatherData: WeatherData?, selectedIndex: Int) {
         let dailyWeatherCoordinator = DailyWeatherCoordinator(controller: navigator, parent: self)
         dailyWeatherCoordinator.weatherData = weatherData
         dailyWeatherCoordinator.navigator = navigator
+        dailyWeatherCoordinator.selectedIndex = selectedIndex
         childCoordinators.append(dailyWeatherCoordinator)
         dailyWeatherCoordinator.start()
     }

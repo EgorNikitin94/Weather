@@ -46,6 +46,26 @@ final class NetworkService {
         }
     }
     
+    /// возвращает запрос почасовой на пять дней
+//    static func airQualityData(locationCoordinate: LocationCoordinate, completion: @escaping ((WeatherData?) -> Void)) {
+//
+//        let apiString = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=50&lon=50&appid=\(ApiKeys.openWeather.rawValue)"
+//
+//        guard let url = URL(string: apiString) else { return }
+//
+//        NetworkService.getDataFromServer(with: url) { (data) in
+//
+//            do {
+//                let weather = try JSONDecoder().decode(WeatherData.self, from: data)
+//                completion(weather)
+//            } catch let error as NSError {
+//                completion(nil)
+//                print(error.debugDescription)
+//            }
+//
+//        }
+//    }
+    
     private static func selectCityName(data: CityData) -> String? {
         
         let administrativeAreaName = data.response.geoObjectCollection.featureMember.first?.geoObject.metaDataProperty.geocoderMetaData.addressDetails.country.administrativeArea?.administrativeAreaName

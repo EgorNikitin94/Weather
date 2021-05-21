@@ -13,6 +13,8 @@ final class DailyWeatherCoordinator: Coordinator {
     
     var weatherData: WeatherData?
     
+    var selectedIndex: Int = 1
+    
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
     
@@ -25,6 +27,7 @@ final class DailyWeatherCoordinator: Coordinator {
         let dailyWeatherViewModel = DailyWeatherViewModel(weatherData: weatherData)
         let dailyWeatherViewController = DailyWeatherViewController(viewModel: dailyWeatherViewModel)
         dailyWeatherViewController.coordinator = self
+        dailyWeatherViewController.selectedIndex = selectedIndex
         navigator.pushViewController(dailyWeatherViewController, animated: true)
     }
     

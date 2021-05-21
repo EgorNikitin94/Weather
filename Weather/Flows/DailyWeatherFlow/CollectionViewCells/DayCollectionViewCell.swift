@@ -17,6 +17,20 @@ final class DayCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    override var isSelected: Bool {
+        willSet(newValue) {
+            if newValue {
+                UIView.animate(withDuration: 0.3) {
+                    self.contentView.backgroundColor = AppColors.sharedInstance.accentBlue
+                    self.dateLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+                }
+            } else {
+                contentView.backgroundColor = .white
+                dateLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+            }
+        }
+    }
+    
     private lazy var dateLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Regular", size: 18)
@@ -35,14 +49,9 @@ final class DayCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureSelectedItem() {
-        contentView.backgroundColor = AppColors.sharedInstance.accentBlue
-        dateLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-    }
-    
-    func configureUnselectedItem() {
-        contentView.backgroundColor = .white
-        dateLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        isSelected = false
     }
     
     private func setupCellView() {

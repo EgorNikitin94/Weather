@@ -184,7 +184,6 @@ final class PartOfDayTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = AppColors.sharedInstance.accentLightBlue
-        contentView.layer.cornerRadius = 5
         
         setupLayout()
     }

@@ -11,6 +11,8 @@ final class DailyWeatherViewController: UIViewController {
     
     var coordinator: DailyWeatherCoordinator?
     
+    var selectedIndex: Int = 1
+    
     private var viewModelOutput: DailyWeatherViewModelOutput
     
     private lazy var topSafeArea: UIView = {
@@ -37,9 +39,6 @@ final class DailyWeatherViewController: UIViewController {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         $0.font = UIFont(name: "Rubik-Medium", size: 18)
         $0.textAlignment = .right
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.03
-        $0.attributedText = NSMutableAttributedString(string: "Cан-Франциско,США", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return $0
     }(UILabel())
     
@@ -64,6 +63,10 @@ final class DailyWeatherViewController: UIViewController {
     
     private var sunAndMoonReuseId: String {
         return String(describing: SunAndMoonTableViewCell.self)
+    }
+    
+    private var airQualityReuseId: String {
+        return String(describing: AirQualityTableViewCell.self)
     }
     
     private lazy var bottomSafeArea: UIView = {
@@ -102,10 +105,17 @@ final class DailyWeatherViewController: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
         
+        cityNameLabel.attributedText = viewModelOutput.configureCityName()
+        
         setupLayout()
         
         setupTableView()
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        daysCollectionView.scrollToItem(at: IndexPath(item: selectedIndex, section: 0), at: .left, animated: true)
     }
     
     @objc private func backButtonTapped() {
@@ -120,6 +130,7 @@ final class DailyWeatherViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(PartOfDayTableViewCell.self, forCellReuseIdentifier: partOfDayReuseID)
         tableView.register(SunAndMoonTableViewCell.self, forCellReuseIdentifier: sunAndMoonReuseId)
+        tableView.register(AirQualityTableViewCell.self, forCellReuseIdentifier: airQualityReuseId)
     }
     
     
@@ -192,6 +203,15 @@ extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionVi
         let daysArray = viewModelOutput.getDailyWeatherArray()
         let day = daysArray[indexPath.item]
         item.configure = viewModelOutput.configureDayItem(with: day)
+
+        if indexPath.item == selectedIndex {
+            item.prepareForReuse()
+            item.isSelected = true
+        } else {
+            item.prepareForReuse()
+            item.isSelected = false
+        }
+        
         return item
     }
     
@@ -204,21 +224,11 @@ extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionVi
         return UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
     }
     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as! DayCollectionViewCell
-//        if cell.isSelected {
-//            cell.configureSelectedItem()
-//        }
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        if let cell = collectionView.cellForItem(at: indexPath) as? DayCollectionViewCell {
-//            if !cell.isSelected {
-//                cell.configureUnselectedItem()
-//            }
-//        }
-//    }
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        daysCollectionView.reloadData()
+        tableView.reloadData()
+    }
     
 }
 
@@ -226,7 +236,7 @@ extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionVi
 extension DailyWeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -238,22 +248,31 @@ extension DailyWeatherViewController: UITableViewDataSource, UITableViewDelegate
         case 0:
             let cell: PartOfDayTableViewCell = tableView.dequeueReusableCell(withIdentifier: partOfDayReuseID, for: indexPath) as! PartOfDayTableViewCell
             let daysArray = viewModelOutput.getDailyWeatherArray()
-            let day = daysArray[1]
+            let day = daysArray[selectedIndex]
             cell.configure = viewModelOutput.configurePartOfDayCell(with: day, partOfDay: .day)
             cell.selectionStyle = .none
+            cell.layer.cornerRadius = 5
+            cell.layer.masksToBounds = true
             return cell
         case 1:
             let cell: PartOfDayTableViewCell = tableView.dequeueReusableCell(withIdentifier: partOfDayReuseID, for: indexPath) as! PartOfDayTableViewCell
             let daysArray = viewModelOutput.getDailyWeatherArray()
-            let day = daysArray[1]
+            let day = daysArray[selectedIndex]
             cell.configure = viewModelOutput.configurePartOfDayCell(with: day, partOfDay: .night)
             cell.selectionStyle = .none
+            cell.layer.cornerRadius = 5
+            cell.layer.masksToBounds = true
+
             return cell
         case 2:
             let cell: SunAndMoonTableViewCell = tableView.dequeueReusableCell(withIdentifier: sunAndMoonReuseId, for: indexPath) as! SunAndMoonTableViewCell
             let daysArray = viewModelOutput.getDailyWeatherArray()
             let day = daysArray[1]
             cell.configure = viewModelOutput.configureSunAndMoonCell(with: day)
+            cell.selectionStyle = .none
+            return cell
+        case 3:
+            let cell: AirQualityTableViewCell = tableView.dequeueReusableCell(withIdentifier: airQualityReuseId, for: indexPath) as! AirQualityTableViewCell
             cell.selectionStyle = .none
             return cell
         default:

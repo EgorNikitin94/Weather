@@ -405,7 +405,8 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
         if collectionView == hourlyForecastCollectionView {
             //
         } else if collectionView == dailyForecastCollectionView {
-            coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
+            let index = indexPath.item
+            coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage, selectedIndex: index + 1)
         }
         
     }
