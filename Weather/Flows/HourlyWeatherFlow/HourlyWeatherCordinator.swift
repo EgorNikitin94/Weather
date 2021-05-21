@@ -11,6 +11,8 @@ final class HourlyWeatherCoordinator: Coordinator {
     
     unowned var parentCoordinator: Coordinator
     
+    var weatherData: WeatherData?
+    
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
     
@@ -20,7 +22,7 @@ final class HourlyWeatherCoordinator: Coordinator {
     }
     
     func start() {
-        let hourlyWeatherViewModel = HourlyWeatherViewModel()
+        let hourlyWeatherViewModel = HourlyWeatherViewModel(weatherData: weatherData)
         let hourlyWeatherViewController = HourlyWeatherViewController(viewModel: hourlyWeatherViewModel)
         hourlyWeatherViewController.coordinator = self
         navigator.pushViewController(hourlyWeatherViewController, animated: true)

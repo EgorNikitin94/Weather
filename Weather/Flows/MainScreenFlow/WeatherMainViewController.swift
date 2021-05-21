@@ -255,7 +255,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func detailsLabelTapped() {
-        coordinator?.pushHourlyWeatherViewController()
+        coordinator?.pushHourlyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
     }
     
     @objc private func daysCountLabelTapped() {

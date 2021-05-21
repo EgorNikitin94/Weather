@@ -35,9 +35,10 @@ final class WeatherMainCoordinator: Coordinator {
         settingsCoordinator.start()
     }
     
-    func pushHourlyWeatherViewController() {
+    func pushHourlyWeatherViewController(weatherData: WeatherData?) {
         let hourlyWeatherCoordinator = HourlyWeatherCoordinator(controller: navigator, parent: self)
         hourlyWeatherCoordinator.navigator = navigator
+        hourlyWeatherCoordinator.weatherData = weatherData
         childCoordinators.append(hourlyWeatherCoordinator)
         hourlyWeatherCoordinator.start()
     }
