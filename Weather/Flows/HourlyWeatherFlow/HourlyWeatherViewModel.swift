@@ -8,6 +8,7 @@
 import UIKit
 
 protocol HourlyWeatherViewModelOutput {
+    func getTimezoneOffset() -> (timezoneOffset: Int, moscowTimeOffset: Int)
     func configureCityName() -> NSMutableAttributedString?
     func getHourlyWeatherArray() -> [Hourly]
     func configureHourlyCell(with object: Hourly) -> HourlyWeather?
@@ -19,6 +20,15 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
     
     init(weatherData: WeatherData?) {
         self.weatherData = weatherData
+    }
+    
+    public func getTimezoneOffset() -> (timezoneOffset: Int, moscowTimeOffset: Int) {
+        guard let timezoneOffset = weatherData?.timezoneOffset, let moscowTimeOffset = weatherData?.moscowTimeOffset else {
+            return (timezoneOffset: 0, moscowTimeOffset: 0)
+        }
+        
+        return (timezoneOffset: timezoneOffset, moscowTimeOffset: moscowTimeOffset)
+        
     }
     
     

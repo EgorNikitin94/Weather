@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5000AD68264D645E00E39E71 /* WeatherPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */; };
+		5029A58B265A6B150024D741 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5029A58A265A6B150024D741 /* ChartView.swift */; };
 		503289872656963900ABAE16 /* DailyFlowModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503289862656963900ABAE16 /* DailyFlowModels.swift */; };
 		503B77A6264BF38C00ACF83B /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B77A5264BF38C00ACF83B /* StringExtension.swift */; };
 		5050473F265454F200447386 /* HourlyWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5050473E265454F200447386 /* HourlyWeatherViewModel.swift */; };
@@ -60,6 +61,7 @@
 
 /* Begin PBXFileReference section */
 		5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPageViewController.swift; sourceTree = "<group>"; };
+		5029A58A265A6B150024D741 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		503289862656963900ABAE16 /* DailyFlowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFlowModels.swift; sourceTree = "<group>"; };
 		503B77A5264BF38C00ACF83B /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		5050473E265454F200447386 /* HourlyWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyWeatherViewModel.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				5097734B2658629B0023B210 /* HourlyFlowModels.swift */,
 				508A236B2654108D00EF5090 /* HourlyWeatherCordinator.swift */,
 				5050473E265454F200447386 /* HourlyWeatherViewModel.swift */,
+				5029A58A265A6B150024D741 /* ChartView.swift */,
 				508A236026540EE500EF5090 /* HourlyWeatherViewController.swift */,
 				5097734826583A580023B210 /* HourlyTableViewCell.swift */,
 			);
@@ -403,6 +406,8 @@
 			dependencies = (
 			);
 			name = Weather;
+			packageProductDependencies = (
+			);
 			productName = Weather;
 			productReference = 50E29CC12640066D00066B93 /* Weather.app */;
 			productType = "com.apple.product-type.application";
@@ -430,6 +435,8 @@
 				Base,
 			);
 			mainGroup = 50E29CB82640066D00066B93;
+			packageReferences = (
+			);
 			productRefGroup = 50E29CC22640066D00066B93 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -523,6 +530,7 @@
 				50E29CC92640066D00066B93 /* OnboardingViewController.swift in Sources */,
 				50DC4AF82641B7E900F2FAE8 /* WeatherMainViewController.swift in Sources */,
 				5094E3A32642BAD400140AD2 /* AppCoordinator.swift in Sources */,
+				5029A58B265A6B150024D741 /* ChartView.swift in Sources */,
 				5094E3C22642E99E00140AD2 /* SettingsViewController.swift in Sources */,
 				5093B82A2649E99600ED31B8 /* DailyForecastCollectionViewCell.swift in Sources */,
 				507DEAA226551EBB00CF284B /* DayCollectionViewCell.swift in Sources */,

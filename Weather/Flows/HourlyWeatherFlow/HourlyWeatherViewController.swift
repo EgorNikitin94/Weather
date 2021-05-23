@@ -35,6 +35,15 @@ final class HourlyWeatherViewController: UIViewController {
         return $0
     }(UILabel())
     
+    private lazy var scrollView: UIScrollView = {
+        return $0
+    }(UIScrollView())
+    
+    private lazy var chartView: ChartView = {
+        $0.backgroundColor = AppColors.sharedInstance.accentLightBlue
+        return $0
+    }(ChartView(hourlyWeather: viewModelOutput.getHourlyWeatherArray(), timezoneOffset: viewModelOutput.getTimezoneOffset().timezoneOffset, moscowTimeOffset: viewModelOutput.getTimezoneOffset().moscowTimeOffset))
+    
     private let tableView = UITableView(frame: .zero, style: .plain)
     
     private lazy var bottomSafeArea: UIView = {
@@ -91,10 +100,12 @@ final class HourlyWeatherViewController: UIViewController {
     }
     
     private func setupLayout() {
+        
         view.addSubview(backButton)
         view.addSubview(titleLabel)
         view.addSubview(cityNameLabel)
-        //view.addSubview(tableView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(chartView)
         view.addSubview(tableView)
         view.addSubview(bottomSafeArea)
         
@@ -115,13 +126,24 @@ final class HourlyWeatherViewController: UIViewController {
             make.leading.equalToSuperview().offset(48)
         }
         
-//        titleLabel.snp.makeConstraints { (make) in
-//            make.top.equalToSuperview().offset(48)
-//            make.leading.equalToSuperview().offset(52)
-//        }
+        scrollView.snp.makeConstraints { (make) in
+            make.top.equalTo(cityNameLabel.snp.bottom).offset(15)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(152)
+        }
+        
+        chartView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.height.equalTo(scrollView.snp.height)
+            make.width.equalTo(430)
+        }
         
         tableView.snp.makeConstraints { (make) in
-            make.top.equalTo(cityNameLabel.snp.bottom).offset(187)
+            make.top.equalTo(scrollView.snp.bottom).offset(20)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomSafeArea.snp.top)
