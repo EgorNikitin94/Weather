@@ -109,7 +109,8 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
         let windDirection = Double(object.windDeg).direction
         let windSpeedfull = NSMutableAttributedString(string: "\(windSpeed) \(windDirection)", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
-        let precipitationValueString = String(format: "%.0f", object.pop  ?? "0")
+        let precipitationValue = (object.pop ?? 0) * 100
+        let precipitationValueString = String(format: "%.0f", precipitationValue)
         let precipitation = NSMutableAttributedString(string: precipitationValueString + "%", attributes: [NSAttributedString.Key.kern: 0.28, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
         let cloudiness = NSMutableAttributedString(string: "\(object.clouds)%", attributes: [NSAttributedString.Key.kern: 0.28, NSAttributedString.Key.paragraphStyle: paragraphStyle])
