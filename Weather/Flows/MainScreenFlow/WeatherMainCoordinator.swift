@@ -35,17 +35,17 @@ final class WeatherMainCoordinator: Coordinator {
         settingsCoordinator.start()
     }
     
-    func pushHourlyWeatherViewController(weatherData: WeatherData?) {
+    func pushHourlyWeatherViewController(cachedWeather: CachedWeather?) {
         let hourlyWeatherCoordinator = HourlyWeatherCoordinator(controller: navigator, parent: self)
         hourlyWeatherCoordinator.navigator = navigator
-        hourlyWeatherCoordinator.weatherData = weatherData
+        hourlyWeatherCoordinator.cachedWeather = cachedWeather
         childCoordinators.append(hourlyWeatherCoordinator)
         hourlyWeatherCoordinator.start()
     }
     
-    func pushDailyWeatherViewController(weatherData: WeatherData?, selectedIndex: Int) {
+    func pushDailyWeatherViewController(cachedWeather: CachedWeather?, selectedIndex: Int) {
         let dailyWeatherCoordinator = DailyWeatherCoordinator(controller: navigator, parent: self)
-        dailyWeatherCoordinator.weatherData = weatherData
+        dailyWeatherCoordinator.cachedWeather = cachedWeather
         dailyWeatherCoordinator.navigator = navigator
         dailyWeatherCoordinator.selectedIndex = selectedIndex
         childCoordinators.append(dailyWeatherCoordinator)

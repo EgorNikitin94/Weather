@@ -57,9 +57,35 @@ final class RealmDataManager {
         guard let cachedWeather = realm?.objects(CachedWeather.self).first(where: {$0.city?.fullName == weather.city?.fullName}) else { return }
         
         try? realm?.write {
-            /// Fixit
-            realm?.delete(cachedWeather.city!)
-            realm?.delete(cachedWeather.current!)
+    
+            for hourlyWeather in cachedWeather.hourly {
+                realm?.delete(hourlyWeather.weathers)
+            }
+            
+            for dailyWeather in cachedWeather.daily {
+                realm?.delete(dailyWeather.weathers)
+                
+                if dailyWeather.feelsLike != nil {
+                    realm?.delete(dailyWeather.feelsLike!)
+                }
+                
+                if dailyWeather.temp != nil {
+                    realm?.delete(dailyWeather.temp!)
+                }
+            }
+            
+            if cachedWeather.city?.location != nil {
+                realm?.delete(cachedWeather.city!.location!)
+            }
+            
+            if cachedWeather.city != nil {
+                realm?.delete(cachedWeather.city!)
+            }
+            
+            if cachedWeather.current != nil {
+                realm?.delete(cachedWeather.current!)
+            }
+            
             realm?.delete(cachedWeather.daily)
             realm?.delete(cachedWeather.hourly)
             guard let city = weather.city else {return}

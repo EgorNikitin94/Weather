@@ -17,7 +17,7 @@ final class ChartView: UIView {
         static let viewHeight: CGFloat = 152.0
     }
     
-    private var hourlyWeather: [Hourly]?
+    private var hourlyWeather: [CachedHourly]?
     
     private let timezoneOffset: Int
     
@@ -41,7 +41,7 @@ final class ChartView: UIView {
         return self.graphHeight() + Constants.topBorder - yPoint // Переворот графика
     }
     
-    init(hourlyWeather: [Hourly]?, timezoneOffset: Int, moscowTimeOffset: Int) {
+    init(hourlyWeather: [CachedHourly]?, timezoneOffset: Int, moscowTimeOffset: Int) {
         self.hourlyWeather = hourlyWeather
         self.timezoneOffset = timezoneOffset
         self.moscowTimeOffset = moscowTimeOffset
@@ -255,7 +255,7 @@ final class ChartView: UIView {
         
     }
     
-    private func configureColumn(hourWeather: Hourly, i: Int, maxValue: Double) {
+    private func configureColumn(hourWeather: CachedHourly, i: Int, maxValue: Double) {
         
         let localData = TimeInterval(timezoneOffset - moscowTimeOffset)
         
@@ -315,7 +315,7 @@ final class ChartView: UIView {
         precipitationLabel.font = UIFont(name: "Rubik-Regular", size: 12)
         paragraphStyle.lineHeightMultiple = 1.05
         paragraphStyle.alignment = i != 0 && i != 7 ? .center : .left
-        let precipitationValue = (hourWeather.pop ?? 0) * 100
+        let precipitationValue = (hourWeather.pop) * 100
         let precipitationValueString = String(format: "%.0f", precipitationValue)
         precipitationLabel.attributedText = NSMutableAttributedString(string: precipitationValueString + "%", attributes: [NSAttributedString.Key.kern: 0.12, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         

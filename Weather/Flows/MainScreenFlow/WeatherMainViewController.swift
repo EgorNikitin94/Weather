@@ -266,7 +266,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func detailsLabelTapped() {
-        //coordinator?.pushHourlyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
+        coordinator?.pushHourlyWeatherViewController(cachedWeather: viewModelOutput.cachedWeather)
     }
     
     @objc private func daysCountLabelTapped() {
@@ -417,7 +417,7 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
             //
         } else if collectionView == dailyForecastCollectionView {
             let index = indexPath.item
-            //coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage, selectedIndex: index + 1)
+            coordinator?.pushDailyWeatherViewController(cachedWeather: viewModelOutput.cachedWeather, selectedIndex: index + 1)
         }
         
     }

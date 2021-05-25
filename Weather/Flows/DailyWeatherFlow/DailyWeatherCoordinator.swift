@@ -11,7 +11,7 @@ final class DailyWeatherCoordinator: Coordinator {
     
     unowned var parentCoordinator: Coordinator
     
-    var weatherData: WeatherData?
+    var cachedWeather: CachedWeather?
     
     var selectedIndex: Int = 1
     
@@ -24,7 +24,7 @@ final class DailyWeatherCoordinator: Coordinator {
     }
     
     func start() {
-        let dailyWeatherViewModel = DailyWeatherViewModel(weatherData: weatherData)
+        let dailyWeatherViewModel = DailyWeatherViewModel(cachedWeather: cachedWeather)
         let dailyWeatherViewController = DailyWeatherViewController(viewModel: dailyWeatherViewModel)
         dailyWeatherViewController.coordinator = self
         dailyWeatherViewController.selectedIndex = selectedIndex

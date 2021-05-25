@@ -8,7 +8,7 @@
 import UIKit
 
 protocol WeatherMainViewModelOutput {
-    //var weatherDataStorage: WeatherData? { get }
+    var cachedWeather: CachedWeather? { get }
     var onWeatherLoaded: ((Bool)->Void)? { get set }
     var onCityLoaded: ((Bool, String?)->Void)? { get set }
     var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
@@ -30,7 +30,6 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     
     lazy var onLoadData: ((MainWeatherControllerState)->Void)? = { [weak self] state in
         self?.loadWeatherData(stateVC: state)
-        //self?.onCityLoaded?(false, self?.cachedWeather?.city?.fullName)
     }
     
     lazy var onLoadCityWeather: ((String)->Void)? = { [weak self] cityName in
@@ -38,8 +37,6 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     }
     
     var cachedWeather: CachedWeather?
-    
-    //var weatherDataStorage: WeatherData?
     
     public func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
         guard let object = cachedWeather else {

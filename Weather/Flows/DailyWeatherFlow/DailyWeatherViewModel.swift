@@ -9,22 +9,22 @@ import UIKit
 
 protocol DailyWeatherViewModelOutput {
     func configureCityName() -> NSMutableAttributedString?
-    func getDailyWeatherArray() -> [Daily]
-    func configureDayItem(with object: Daily) -> String?
-    func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day?
-    func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase?
+    func getDailyWeatherArray() -> [CachedDaily]
+    func configureDayItem(with object: CachedDaily) -> String?
+    func configurePartOfDayCell(with object: CachedDaily, partOfDay: PartOfDay) -> Day?
+    func configureSunAndMoonCell(with object: CachedDaily) -> SunAndMoonPhase?
 }
 
 final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     
-    private let weatherData: WeatherData?
+    private let cachedWeather: CachedWeather?
     
-    init(weatherData: WeatherData?) {
-        self.weatherData = weatherData
+    init(cachedWeather: CachedWeather?) {
+        self.cachedWeather = cachedWeather
     }
     
     public func configureCityName() -> NSMutableAttributedString? {
-        guard let city = weatherData?.city else {
+        guard let city = cachedWeather?.city else {
             return nil
         }
         let paragraphStyle = NSMutableParagraphStyle()
@@ -32,17 +32,17 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         return NSMutableAttributedString(string: city.fullName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
     }
     
-    public func getDailyWeatherArray() -> [Daily] {
-        guard let weather = weatherData else {
+    public func getDailyWeatherArray() -> [CachedDaily] {
+        guard let weather = cachedWeather else {
             return []
         }
         
-        return weather.daily
+        return Array(weather.daily)
     }
     
-    public func configureDayItem(with object: Daily) -> String? {
+    public func configureDayItem(with object: CachedDaily) -> String? {
         
-        guard let weather = weatherData else {
+        guard let weather = cachedWeather else {
             return nil
         }
         let localData = TimeInterval(weather.timezoneOffset - weather.moscowTimeOffset)
@@ -55,7 +55,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         return dayDate
     }
     
-    public func configurePartOfDayCell(with object: Daily, partOfDay: PartOfDay) -> Day? {
+    public func configurePartOfDayCell(with object: CachedDaily, partOfDay: PartOfDay) -> Day? {
         
         let paragraphStyle = NSMutableParagraphStyle()
         
@@ -64,19 +64,19 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         let dayPart = NSMutableAttributedString(string: partOfDay.rawValue, attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
         if partOfDay == .day {
-            let weatherImage = setupWeatherImage(weather: object.weather.first?.main)
+            let weatherImage = setupWeatherImage(weather: object.weathers.first?.main)
             
-            let temperatureValueString = String(format: "%.0f", convertTemperature(object.temp.day))
+            let temperatureValueString = String(format: "%.0f", convertTemperature(object.temp?.day ?? 0))
             paragraphStyle.lineHeightMultiple = 1.01
             let temperature = NSMutableAttributedString(string: temperatureValueString + "º", attributes: [NSAttributedString.Key.kern: 0.6, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             paragraphStyle.lineHeightMultiple = 1.03
-            let temperatureDescription = NSMutableAttributedString(string: "\(object.weather.first?.weatherDescription ?? "")".uppercasedFirstLetter(), attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            let temperatureDescription = NSMutableAttributedString(string: "\(object.weathers.first?.weatherDescription ?? "")".uppercasedFirstLetter(), attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
-            let thermometerImage = setThermometerImage(temp: object.feelsLike.day)
+            let thermometerImage = setThermometerImage(temp: object.feelsLike?.day ?? 0)
             
             paragraphStyle.lineHeightMultiple = 1.03
-            let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike.day))
+            let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike?.day ?? 0))
             let feelsTemperature = NSMutableAttributedString(string: feelsTemperatureValueString + "º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             let windSpeedValueString = convertSpeed(speed: object.windSpeed)
@@ -103,19 +103,19 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
                         precipitation,
                        cloudiness: cloudiness)
         } else {
-            let weatherImage = setupWeatherImage(weather: object.weather.first?.main)
+            let weatherImage = setupWeatherImage(weather: object.weathers.first?.main)
             
-            let temperatureValueString = String(format: "%.0f", convertTemperature(object.temp.night))
+            let temperatureValueString = String(format: "%.0f", convertTemperature(object.temp?.night ?? 0))
             paragraphStyle.lineHeightMultiple = 1.01
             let temperature = NSMutableAttributedString(string: temperatureValueString + "º", attributes: [NSAttributedString.Key.kern: 0.6, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             paragraphStyle.lineHeightMultiple = 1.03
-            let temperatureDescription = NSMutableAttributedString(string: "\(object.weather.first?.weatherDescription ?? "")".uppercasedFirstLetter(), attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            let temperatureDescription = NSMutableAttributedString(string: "\(object.weathers.first?.weatherDescription ?? "")".uppercasedFirstLetter(), attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
-            let thermometerImage = setThermometerImage(temp: object.feelsLike.night)
+            let thermometerImage = setThermometerImage(temp: object.feelsLike?.night ?? 0)
             
             paragraphStyle.lineHeightMultiple = 1.03
-            let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike.night))
+            let feelsTemperatureValueString = String(format: "%.0f", convertTemperature(object.feelsLike?.night ?? 0))
             let feelsTemperature = NSMutableAttributedString(string: feelsTemperatureValueString + "º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
             
             let windSpeedValueString = convertSpeed(speed: object.windSpeed)
@@ -183,7 +183,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
         }
     }
     
-    public func configureSunAndMoonCell(with object: Daily) -> SunAndMoonPhase? {
+    public func configureSunAndMoonCell(with object: CachedDaily) -> SunAndMoonPhase? {
         
         let moonPhase = getAttributedStringMoonPhase(moonPhase: object.moonPhase)
         guard let dayDuration = getAttributedStringTime(time: object.sunset - object.sunrise, isLongTime: true) else {return nil}
@@ -237,7 +237,7 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     
     private func getAttributedStringTime(time: Int, isLongTime: Bool) -> NSMutableAttributedString? {
         
-        guard let weatherData = weatherData else { return nil}
+        guard let weatherData = cachedWeather else { return nil}
         
         let localData = TimeInterval(weatherData.timezoneOffset - weatherData.moscowTimeOffset)
         

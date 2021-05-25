@@ -10,20 +10,20 @@ import UIKit
 protocol HourlyWeatherViewModelOutput {
     func getTimezoneOffset() -> (timezoneOffset: Int, moscowTimeOffset: Int)
     func configureCityName() -> NSMutableAttributedString?
-    func getHourlyWeatherArray() -> [Hourly]
-    func configureHourlyCell(with object: Hourly) -> HourlyWeather?
+    func getHourlyWeatherArray() -> [CachedHourly]
+    func configureHourlyCell(with object: CachedHourly) -> HourlyWeather?
 }
 
 final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
+        
+    private let cachedWeather: CachedWeather?
     
-    var weatherData: WeatherData?
-    
-    init(weatherData: WeatherData?) {
-        self.weatherData = weatherData
+    init(cachedWeather: CachedWeather?) {
+        self.cachedWeather = cachedWeather
     }
     
     public func getTimezoneOffset() -> (timezoneOffset: Int, moscowTimeOffset: Int) {
-        guard let timezoneOffset = weatherData?.timezoneOffset, let moscowTimeOffset = weatherData?.moscowTimeOffset else {
+        guard let timezoneOffset = cachedWeather?.timezoneOffset, let moscowTimeOffset = cachedWeather?.moscowTimeOffset else {
             return (timezoneOffset: 0, moscowTimeOffset: 0)
         }
         
@@ -33,7 +33,7 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
     
     
     public func configureCityName() -> NSMutableAttributedString? {
-        guard let city = weatherData?.city else {
+        guard let city = cachedWeather?.city else {
             return nil
         }
         let paragraphStyle = NSMutableParagraphStyle()
@@ -41,11 +41,11 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
         return NSMutableAttributedString(string: city.fullName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
     }
     
-    public func getHourlyWeatherArray() -> [Hourly] {
-        guard let weather = weatherData else {
+    public func getHourlyWeatherArray() -> [CachedHourly] {
+        guard let weather = cachedWeather else {
             return []
         }
-        var wetherArray = [Hourly]()
+        var wetherArray = [CachedHourly]()
         for (index, hourlyWeather) in weather.hourly.enumerated() {
             switch index {
             case 0:
@@ -71,9 +71,9 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
         return wetherArray
     }
     
-    public func configureHourlyCell(with object: Hourly) -> HourlyWeather? {
+    public func configureHourlyCell(with object: CachedHourly) -> HourlyWeather? {
         
-        guard let weather = weatherData else {
+        guard let weather = cachedWeather else {
             return nil
         }
         
@@ -98,18 +98,18 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
         paragraphStyle.lineHeightMultiple = 1.03
         let temperature = NSMutableAttributedString(string: temperatureValueString + "º", attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
-        let weatherImage = setupWeatherImage(weather: object.weather.first?.main)
+        let weatherImage = setupWeatherImage(weather: object.weathers.first?.main)
         
         paragraphStyle.lineHeightMultiple = 1.15
         let feelsTemperature = String(format: "%.0f", convertTemperature(object.feelsLike))
-        let weatherDescriptionString = "\(object.weather.first?.weatherDescription.uppercasedFirstLetter() ?? "") По ощущению \(feelsTemperature)º"
+        let weatherDescriptionString = "\(object.weathers.first?.weatherDescription.uppercasedFirstLetter() ?? "") По ощущению \(feelsTemperature)º"
         let weatherDescription = NSMutableAttributedString(string: weatherDescriptionString, attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
         let windSpeed = convertSpeed(speed: object.windSpeed)
         let windDirection = Double(object.windDeg).direction
         let windSpeedfull = NSMutableAttributedString(string: "\(windSpeed) \(windDirection)", attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
-        let precipitationValue = (object.pop ?? 0) * 100
+        let precipitationValue = (object.pop) * 100
         let precipitationValueString = String(format: "%.0f", precipitationValue)
         let precipitation = NSMutableAttributedString(string: precipitationValueString + "%", attributes: [NSAttributedString.Key.kern: 0.28, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
