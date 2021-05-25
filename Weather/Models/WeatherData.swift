@@ -9,63 +9,34 @@ import Foundation
 
 struct WeatherData: Decodable {
     var city: City?
-    let current: Current
-    let timezone: String
+    let current: Hourly
     let timezoneOffset: Int
     let moscowTimeOffset: Int = 10800
     var hourly: [Hourly]
     var daily: [Daily]
     
     enum CodingKeys: String, CodingKey {
-        case current,timezone, hourly, daily, city
+        case current, hourly, daily, city
         case timezoneOffset = "timezone_offset"
     }
 }
 
-struct Current: Decodable {
+struct Hourly: Decodable {
     let dt, humidity: Int
-    let sunrise, sunset: Int
+    let sunrise, sunset: Int?
     let temp, feelsLike: Double
-    let dewPoint, uvi: Double
+    let windSpeed, uvi: Double
     let clouds, windDeg: Int
-    let windSpeed: Double
     let weather: [Weather]
+    let pop: Double?
     
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, temp
         case feelsLike = "feels_like"
-        case humidity
-        case dewPoint = "dew_point"
         case uvi, clouds
         case windSpeed = "wind_speed"
         case windDeg = "wind_deg"
-        case weather
-    }
-}
-
-struct Hourly: Decodable {
-    let dt: Int
-    let sunrise, sunset: Int?
-    let temp, feelsLike: Double
-    let pressure, humidity: Int
-    let dewPoint, uvi: Double
-    let clouds, visibility: Int
-    let windSpeed: Double
-    let windDeg: Int
-    let weather: [Weather]
-    let rain: Rain?
-    let windGust, pop: Double?
-    
-    enum CodingKeys: String, CodingKey {
-        case dt, sunrise, sunset, temp
-        case feelsLike = "feels_like"
-        case pressure, humidity
-        case dewPoint = "dew_point"
-        case uvi, clouds, visibility
-        case windSpeed = "wind_speed"
-        case windDeg = "wind_deg"
-        case weather, rain
-        case windGust = "wind_gust"
+        case weather, humidity
         case pop
     }
 }
@@ -80,14 +51,6 @@ struct Weather: Decodable {
     }
 }
 
-struct Rain: Decodable {
-    let h1: Double
-    
-    enum CodingKeys: String, CodingKey {
-        case h1 = "1h"
-    }
-}
-
 struct Daily: Decodable {
     let dt, sunrise, sunset: Int
     let moonrise, moonset: Int
@@ -95,11 +58,10 @@ struct Daily: Decodable {
     let temp: Temp
     let feelsLike: FeelsLike
     let humidity: Int
-    let dewPoint, windSpeed: Double
+    let pop, windSpeed: Double
     let windDeg: Int
     let weather: [Weather]
     let clouds: Int
-    let pop: Double
     let rain: Double?
     let uvi: Double
     
@@ -109,7 +71,6 @@ struct Daily: Decodable {
         case temp
         case feelsLike = "feels_like"
         case humidity
-        case dewPoint = "dew_point"
         case windSpeed = "wind_speed"
         case windDeg = "wind_deg"
         case weather, clouds, pop, rain, uvi

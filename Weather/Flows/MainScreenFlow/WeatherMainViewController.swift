@@ -21,6 +21,12 @@ final class WeatherMainViewController: UIViewController {
     
     private var viewModelOutput: WeatherMainViewModelOutput
     
+    var currentPage: Int? {
+        didSet {
+            pageControl.currentPage = currentPage ?? 2
+        }
+    }
+    
     var numberOfPages: Int? {
         didSet {
             pageControl.numberOfPages = numberOfPages ?? 2
@@ -29,7 +35,7 @@ final class WeatherMainViewController: UIViewController {
     
     var weatherPageViewController: WeatherPageViewController? {
         didSet {
-            weatherPageViewController?.weatherDelegate = self
+            //weatherPageViewController?.weatherDelegate = self
         }
     }
     
@@ -172,18 +178,23 @@ final class WeatherMainViewController: UIViewController {
         super.viewDidLoad()
         viewModelOutput.onLoadData?(stateViewController)
         view.backgroundColor = .white
-        pageControl.numberOfPages = weatherPageViewController?.orderedViewControllers.count ?? 1
-        pageControl.currentPage = 0
         setupNavigationBar()
         setupLayout()
+        updateWeatherData()
         getWeatherData()
+        cityNameLabel.attributedText = viewModelOutput.configureCityName()
+        cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         getCityName()
     }
     
     private func getWeatherData() {
         viewModelOutput.onWeatherLoaded = { bool in
             if bool {
-                self.updateWeatherData()
+                //DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.updateWeatherData()
+                //}
+                
+                
             }
         }
     }
@@ -255,7 +266,7 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func detailsLabelTapped() {
-        coordinator?.pushHourlyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
+        //coordinator?.pushHourlyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage)
     }
     
     @objc private func daysCountLabelTapped() {
@@ -406,7 +417,7 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
             //
         } else if collectionView == dailyForecastCollectionView {
             let index = indexPath.item
-            coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage, selectedIndex: index + 1)
+            //coordinator?.pushDailyWeatherViewController(weatherData: viewModelOutput.weatherDataStorage, selectedIndex: index + 1)
         }
         
     }
@@ -420,13 +431,13 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
     }
 }
 
-extension WeatherMainViewController: WeatherPageViewControllerDelegate {
-    
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageCount count: Int) {
-        pageControl.numberOfPages = count
-    }
-    
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int) {
-        pageControl.currentPage = index
-    }
-}
+//extension WeatherMainViewController: WeatherPageViewControllerDelegate {
+//
+//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, weatherMainViewController: WeatherMainViewController, didUpdatePageCount count: Int) {
+//        pageControl.numberOfPages = count
+//    }
+//
+//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int) {
+//        pageControl.currentPage = index
+//    }
+//}

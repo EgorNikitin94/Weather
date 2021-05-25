@@ -7,18 +7,18 @@
 
 import UIKit
 
-protocol WeatherPageViewControllerDelegate: class {
-    
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageCount count: Int)
-    
-    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int)
-    
-}
+//protocol WeatherPageViewControllerDelegate: class {
+//
+//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, weatherMainViewController: WeatherMainViewController, didUpdatePageCount count: Int)
+//
+//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int)
+//
+//}
 
 
 final class WeatherPageViewController: UIPageViewController {
     
-    weak var weatherDelegate: WeatherPageViewControllerDelegate?
+    //weak var weatherDelegate: WeatherPageViewControllerDelegate?
     
     var orderedViewControllers: [WeatherMainViewController] = []
     
@@ -27,13 +27,13 @@ final class WeatherPageViewController: UIPageViewController {
         
         view.backgroundColor = .white
         dataSource = self
-        delegate = self
+        //delegate = self
         
         if let initialViewController = orderedViewControllers.first {
             scrollToViewController(viewController: initialViewController)
         }
         
-        weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageCount: orderedViewControllers.count)
+        //weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageCount: orderedViewControllers.count)
     }
     
     
@@ -41,8 +41,9 @@ final class WeatherPageViewController: UIPageViewController {
         
         orderedViewControllers.append(newViewController)
         
-        for weatherMainViewController in orderedViewControllers {
+        for (index, weatherMainViewController) in orderedViewControllers.enumerated() {
             weatherMainViewController.numberOfPages = orderedViewControllers.count
+            newViewController.currentPage = index
         }
     }
     
@@ -67,17 +68,17 @@ final class WeatherPageViewController: UIPageViewController {
     private func scrollToViewController(viewController: UIViewController, direction: UIPageViewController.NavigationDirection = .forward) {
         setViewControllers([viewController], direction: direction, animated: true, completion: { (finished) -> Void in
            
-            self.notifyTutorialDelegateOfNewIndex()
+            //self.notifyTutorialDelegateOfNewIndex()
         })
     }
     
 
-    private func notifyTutorialDelegateOfNewIndex() {
-        if let firstViewController = viewControllers?.first,
-           let index = orderedViewControllers.firstIndex(of: firstViewController as! WeatherMainViewController) {
-            weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageIndex: index)
-        }
-    }
+//    private func notifyTutorialDelegateOfNewIndex() {
+//        if let firstViewController = viewControllers?.first,
+//           let index = orderedViewControllers.firstIndex(of: firstViewController as! WeatherMainViewController) {
+//            //weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageIndex: index)
+//        }
+//    }
     
 }
 
@@ -122,10 +123,10 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
     
 }
 
-extension WeatherPageViewController: UIPageViewControllerDelegate {
-    
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        notifyTutorialDelegateOfNewIndex()
-    }
-    
-}
+//extension WeatherPageViewController: UIPageViewControllerDelegate {
+//
+//    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+//        notifyTutorialDelegateOfNewIndex()
+//    }
+//
+//}

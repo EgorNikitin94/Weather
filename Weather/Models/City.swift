@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct City: Decodable {
+    let location: LocationCoordinate
+    let fullName: String
+}
+
 struct CityData: Decodable {
     let response: Response
 }
@@ -128,7 +133,3 @@ struct Point: Decodable {
     let pos: String
 }
 
-struct City: Decodable {
-    let location: LocationCoordinate
-    let fullName: String
-}
