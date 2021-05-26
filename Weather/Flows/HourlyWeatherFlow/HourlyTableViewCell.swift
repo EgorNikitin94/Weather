@@ -123,7 +123,6 @@ final class HourlyTableViewCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        
         contentView.addSubview(dateLabel)
         contentView.addSubview(timeLabel)
         contentView.addSubview(temperatureLabel)

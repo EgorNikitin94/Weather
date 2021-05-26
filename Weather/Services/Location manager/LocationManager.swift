@@ -30,7 +30,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func getCurrentLocation(completion: ((LocationCoordinate) -> Void)?) {
-        
         if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
             print("Пользователь не дал согласие на обработку локации")
             return
@@ -54,7 +53,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
         let lc = LocationCoordinate.create(location: locations.last!)
         blockForSave?(lc)
         

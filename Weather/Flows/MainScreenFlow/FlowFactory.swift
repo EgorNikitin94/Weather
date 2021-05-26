@@ -10,28 +10,28 @@ import UIKit
 struct FlowFactory {
     
     static func makeMainScreenFlow(coordinator: WeatherMainCoordinator) -> UIPageViewController {
-        
         let pageViewController = WeatherPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue) {
-            let weatherMainViewController = makeWeatherMainViewController(coordinator: coordinator, stateViewController: .currentLocationWeather, pageViewController: pageViewController)
-            //pageViewController.orderedViewControllers.append(weatherMainViewController)
-            pageViewController.appendNewViewController(newViewController: weatherMainViewController)
+            if let currentLocationWeather = RealmDataManager.sharedInstance.getCurrentLocationCachedWeather() {
+                let weatherMainViewController = makeWeatherMainViewController(coordinator: coordinator, stateViewController: .currentLocationWeather, pageViewController: pageViewController, cityWeather:  currentLocationWeather)
+                pageViewController.appendNewViewController(newViewController: weatherMainViewController)
+            } else {
+                let weatherMainViewController = makeWeatherMainViewController(coordinator: coordinator, stateViewController: .currentLocationWeather, pageViewController: pageViewController)
+                pageViewController.appendNewViewController(newViewController: weatherMainViewController)
+            }
         }
         
         let weather = RealmDataManager.sharedInstance.getCachedWeather()
         if !weather.isEmpty {
             for cityWeather in weather {
                 let weatherMainViewController = makeWeatherMainViewController(coordinator: coordinator, stateViewController: .selectedCityWeather, pageViewController: pageViewController, cityWeather:  cityWeather)
-                //pageViewController.orderedViewControllers.append(weatherMainViewController)
                 pageViewController.appendNewViewController(newViewController: weatherMainViewController)
             }
         }
         
         let weatherMainViewController = makeWeatherMainViewController(coordinator: coordinator, stateViewController: .emptyWithPlus, pageViewController: pageViewController)
  
-        //pageViewController.orderedViewControllers.append(weatherMainViewController)
         pageViewController.appendNewViewController(newViewController: weatherMainViewController)
         
         return pageViewController

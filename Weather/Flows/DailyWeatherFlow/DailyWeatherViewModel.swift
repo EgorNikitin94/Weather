@@ -41,7 +41,6 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     }
     
     public func configureDayItem(with object: CachedDaily) -> String? {
-        
         guard let weather = cachedWeather else {
             return nil
         }
@@ -56,7 +55,6 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     }
     
     public func configurePartOfDayCell(with object: CachedDaily, partOfDay: PartOfDay) -> Day? {
-        
         let paragraphStyle = NSMutableParagraphStyle()
         
         paragraphStyle.lineHeightMultiple = 1.03
@@ -184,7 +182,6 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     }
     
     public func configureSunAndMoonCell(with object: CachedDaily) -> SunAndMoonPhase? {
-        
         let moonPhase = getAttributedStringMoonPhase(moonPhase: object.moonPhase)
         guard let dayDuration = getAttributedStringTime(time: object.sunset - object.sunrise, isLongTime: true) else {return nil}
         guard let nightDuration = getAttributedStringTime(time: object.moonset - object.moonrise, isLongTime: true) else {return nil}
@@ -203,7 +200,6 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     }
     
     private func getAttributedStringMoonPhase(moonPhase: Double) -> NSMutableAttributedString {
-        
         var text = ""
         
         switch moonPhase {
@@ -236,7 +232,6 @@ final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     }
     
     private func getAttributedStringTime(time: Int, isLongTime: Bool) -> NSMutableAttributedString? {
-        
         guard let weatherData = cachedWeather else { return nil}
         
         let localData = TimeInterval(weatherData.timezoneOffset - weatherData.moscowTimeOffset)

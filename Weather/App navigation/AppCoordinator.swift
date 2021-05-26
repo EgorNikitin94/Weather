@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AppCoordinator: Coordinator {
+final class AppCoordinator: Coordinator {
     
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
@@ -22,18 +22,14 @@ class AppCoordinator: Coordinator {
             weatherMainCoordinator.start()
             childCoordinators.append(weatherMainCoordinator)
         } else {
-            let onboardingCoordinator = OnboardingCoordinator(controller: navigator, parent: self)
+            let onboardingCoordinator = GeolocationCoordinator(controller: navigator, parent: self)
             onboardingCoordinator.start()
             childCoordinators.append(onboardingCoordinator)
         }
     }
     
     func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
+        childCoordinators = childCoordinators.filter { $0 !== child }
     }
+
 }

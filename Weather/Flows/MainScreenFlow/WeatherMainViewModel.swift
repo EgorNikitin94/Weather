@@ -12,7 +12,7 @@ protocol WeatherMainViewModelOutput {
     var onWeatherLoaded: ((Bool)->Void)? { get set }
     var onCityLoaded: ((Bool, String?)->Void)? { get set }
     var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
-    var onLoadCityWeather: ((String)->Void)? {get set}
+    var onLoadNewCityWeather: ((String)->Void)? {get set}
     func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
     func configureHourlyItem(with object: CachedHourly) -> (time: String, image: UIImage?, temperature: String)?
     func configureDailyItem(with object: CachedDaily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
@@ -24,16 +24,16 @@ protocol WeatherMainViewModelOutput {
 
 final class WeatherMainViewModel: WeatherMainViewModelOutput {
     
-    var onWeatherLoaded: ((Bool)->Void)?
+    var onWeatherLoaded: ((Bool) -> Void)?
     
-    var onCityLoaded: ((Bool, String?)->Void)?
+    var onCityLoaded: ((Bool, String?) -> Void)?
     
-    lazy var onLoadData: ((MainWeatherControllerState)->Void)? = { [weak self] state in
-        self?.loadWeatherData(stateVC: state)
+    lazy var onLoadData: ((MainWeatherControllerState) -> Void)? = { [weak self] state in
+        self?.loadCityAndWeatherData(stateVC: state)
     }
     
-    lazy var onLoadCityWeather: ((String)->Void)? = { [weak self] cityName in
-        self?.loadCityWeather(cityName: cityName)
+    lazy var onLoadNewCityWeather: ((String) -> Void)? = { [weak self] cityName in
+        self?.loadNewCityAndWeatherData(cityName: cityName)
     }
     
     var cachedWeather: CachedWeather?
@@ -106,7 +106,7 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         guard let weather = cachedWeather else {
             return []
         }
-        //print("h: \(weather.hourly.count), d:\(weather.daily.count)")
+        
         var wetherArray = [CachedHourly]()
         for (index, hourlyWeather) in weather.hourly.enumerated() {
             switch index {
@@ -163,14 +163,80 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         }
     }
     
-    private func loadCityWeather(cityName: String) {
+    private func loadCityAndWeatherData(stateVC: MainWeatherControllerState) {
+        switch stateVC {
+        case .currentLocationWeather:
+            LocationManager.sharedInstance.getCurrentLocation { [weak self] (locationCoordinate) in
+                self?.loadCurrentLocationWeather(locationCoordinate: locationCoordinate)
+            }
+        case .selectedCityWeather:
+            guard let locationCoordinate = self.cachedWeather?.city?.location else {
+                break
+            }
+            let location = LocationCoordinate(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            let city = City(location: location, fullName: self.cachedWeather?.city?.fullName ?? "unknown")
+            loadWeather(locationCoordinate: location, city: city)
+        case .emptyWithPlus: break
+        }
+        
+    }
+    
+    private func loadCurrentLocationWeather(locationCoordinate: LocationCoordinate) {
+        NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
+            if let weatherData = weatherData {
+                self?.loadCurrentLocationCityName(locationCoordinate: locationCoordinate, weatherData: weatherData)
+            } else {
+                self?.onWeatherLoaded?(false)
+            }
+        }
+    }
+    
+    private func loadCurrentLocationCityName(locationCoordinate: LocationCoordinate, weatherData: WeatherData) {
+        NetworkService.getNameOfCity(location: locationCoordinate) { [weak self] (city) in
+            if let city = city {
+                var newWeatherData = weatherData
+                newWeatherData.city = city
+                guard let newCachedWeather = RealmDataManager.sharedInstance.getNewCachedWeather(newWeatherData) else {return}
+                self?.cachedWeather = newCachedWeather
+                self?.chooseActionForRealm(weatherData: newWeatherData)
+                self?.onWeatherLoaded?(true)
+                self?.onCityLoaded?(true, city.fullName)
+            } else {
+                self?.onCityLoaded?(false, city?.fullName)
+            }
+        }
+    }
+    
+    private func chooseActionForRealm(weatherData: WeatherData) {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+            RealmDataManager.sharedInstance.updateCachedWeather(weatherData, isCurrentLocation: true)
+        } else {
+            RealmDataManager.sharedInstance.addCachedWeather(weatherData, isCurrentLocation: true)
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
+        }
+    }
+    
+    private func loadWeather(locationCoordinate: LocationCoordinate, city: City) {
+        NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
+            if var weatherData = weatherData {
+                weatherData.city = city
+                guard let newCachedWeather = RealmDataManager.sharedInstance.getNewCachedWeather(weatherData) else {return} //, let cachedWeather = self?.cachedWeather
+                self?.cachedWeather = newCachedWeather
+                RealmDataManager.sharedInstance.updateCachedWeather(weatherData)
+                self?.onWeatherLoaded?(true)
+            } else {
+                self?.onWeatherLoaded?(false)
+            }
+        }
+    }
+    
+    private func loadNewCityAndWeatherData(cityName: String) {
         NetworkService.getGeolocationOfCity(cityName: cityName) { [weak self] (city) in
             if city != nil, let cityLocation = city?.location {
                 self?.loadNewWeather(locationCoordinate: cityLocation, city: city!)
             } else {
                 self?.onCityLoaded?(false, city?.fullName)
             }
-
         }
     }
     
@@ -190,49 +256,6 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         }
     }
     
-    private func loadWeather(locationCoordinate: LocationCoordinate, isNeedLoadCityName: Bool, city: City) {
-        NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
-            if var weatherData = weatherData {
-                weatherData.city = city
-                guard let newCachedWeather = RealmDataManager.sharedInstance.getNewCachedWeather(weatherData) else {return} //, let cachedWeather = self?.cachedWeather
-                self?.cachedWeather = newCachedWeather
-                RealmDataManager.sharedInstance.updateCachedWeather(weatherData)
-                self?.onWeatherLoaded?(true)
-            } else {
-                self?.onWeatherLoaded?(false)
-            }
-            
-        }
-    }
-    
-    private func loadCityName(location: LocationCoordinate) {
-        NetworkService.getNameOfCity(location: location) { [weak self] (city) in
-            if let city = city {
-                self?.onCityLoaded?(true, city.fullName)
-            } else {
-                self?.onCityLoaded?(false, city?.fullName)
-            }
-        }
-    }
-    
-    private func loadWeatherData(stateVC: MainWeatherControllerState) {
-        switch stateVC {
-        case .currentLocationWeather:
-            LocationManager.sharedInstance.getCurrentLocation { (locationCoordinate) in
-                //self.loadWeather(locationCoordinate: locationCoordinate, isNeedLoadCityName: true)
-            }
-        case .selectedCityWeather:
-            guard let locationCoordinate = self.cachedWeather?.city?.location else {
-                break
-            }
-            let location = LocationCoordinate(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
-            let city = City(location: location, fullName: self.cachedWeather?.city?.fullName ?? "unknown")
-            loadWeather(locationCoordinate: location, isNeedLoadCityName: false, city: city)
-        case .emptyWithPlus: break
-        }
-        
-    }
-
     
     private func convertTemperature(_ temperature: Double) -> Double {
         if UserDefaults.standard.bool(forKey:UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue) {

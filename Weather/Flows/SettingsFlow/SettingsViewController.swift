@@ -55,7 +55,12 @@ final class SettingsViewController: UIViewController {
     private func onSetupButtonTapped() {
         if let settingsCoordinator = coordinator {
             settingsView.onSetupButtonTapped = {
-                settingsCoordinator.popToWeatherMainViewController()
+                if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+                    settingsCoordinator.popToWeatherMainViewController()
+                } else {
+                    settingsCoordinator.pushWeatherMainViewController()
+                }
+                
             }
         }
     }

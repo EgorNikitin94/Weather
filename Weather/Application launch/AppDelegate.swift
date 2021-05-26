@@ -21,7 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func buildApp() {
-        
         window = UIWindow(frame: UIScreen.main.bounds)
         
         let appCoordinator = AppCoordinator()

@@ -54,7 +54,6 @@ final class ChartView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        
         guard let weather = hourlyWeather else { return }
         
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -256,7 +255,6 @@ final class ChartView: UIView {
     }
     
     private func configureColumn(hourWeather: CachedHourly, i: Int, maxValue: Double) {
-        
         let localData = TimeInterval(timezoneOffset - moscowTimeOffset)
         
         let paragraphStyle = NSMutableParagraphStyle()

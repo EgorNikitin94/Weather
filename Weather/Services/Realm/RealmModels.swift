@@ -14,6 +14,7 @@ import RealmSwift
     dynamic var city: CachedCity? = nil
     dynamic var current: CachedHourly? = nil
     dynamic var timezoneOffset: Int = 0
+    dynamic var isCurrentLocationWeather: Bool = false
     let moscowTimeOffset: Int = 10800
     var hourly = List<CachedHourly>()
     var daily = List<CachedDaily>()
@@ -104,12 +105,6 @@ class CachedWeatherDetails: Object {
     
     dynamic var location: CachedLocation? = nil
     dynamic var fullName: String = ""
-    
-//    convenience init(location: CachedLocation, fullName: String) {
-//        self.fullName = fullName
-//        self.location = location
-//
-//    }
 }
 
 @objcMembers class CachedLocation: Object {

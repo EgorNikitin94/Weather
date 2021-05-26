@@ -7,18 +7,8 @@
 
 import UIKit
 
-//protocol WeatherPageViewControllerDelegate: class {
-//
-//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, weatherMainViewController: WeatherMainViewController, didUpdatePageCount count: Int)
-//
-//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int)
-//
-//}
-
 
 final class WeatherPageViewController: UIPageViewController {
-    
-    //weak var weatherDelegate: WeatherPageViewControllerDelegate?
     
     var orderedViewControllers: [WeatherMainViewController] = []
     
@@ -27,18 +17,15 @@ final class WeatherPageViewController: UIPageViewController {
         
         view.backgroundColor = .white
         dataSource = self
-        //delegate = self
         
         if let initialViewController = orderedViewControllers.first {
             scrollToViewController(viewController: initialViewController)
         }
         
-        //weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageCount: orderedViewControllers.count)
     }
     
     
     func appendNewViewController(newViewController: WeatherMainViewController) {
-        
         orderedViewControllers.append(newViewController)
         
         for (index, weatherMainViewController) in orderedViewControllers.enumerated() {
@@ -56,8 +43,8 @@ final class WeatherPageViewController: UIPageViewController {
     
     
     func scrollToViewController(index newIndex: Int) {
-        if let firstViewController = viewControllers?.first,
-           let currentIndex = orderedViewControllers.firstIndex(of: firstViewController as! WeatherMainViewController) {
+        if let firstViewController = viewControllers?.first as? WeatherMainViewController,
+           let currentIndex = orderedViewControllers.firstIndex(of: firstViewController) {
             let direction: UIPageViewController.NavigationDirection = newIndex >= currentIndex ? .forward : .reverse
             let nextViewController = orderedViewControllers[newIndex]
             scrollToViewController(viewController: nextViewController, direction: direction)
@@ -68,25 +55,15 @@ final class WeatherPageViewController: UIPageViewController {
     private func scrollToViewController(viewController: UIViewController, direction: UIPageViewController.NavigationDirection = .forward) {
         setViewControllers([viewController], direction: direction, animated: true, completion: { (finished) -> Void in
            
-            //self.notifyTutorialDelegateOfNewIndex()
         })
     }
-    
-
-//    private func notifyTutorialDelegateOfNewIndex() {
-//        if let firstViewController = viewControllers?.first,
-//           let index = orderedViewControllers.firstIndex(of: firstViewController as! WeatherMainViewController) {
-//            //weatherDelegate?.weatherPageViewController(weatherPageViewController: self, didUpdatePageIndex: index)
-//        }
-//    }
-    
 }
 
 // MARK: UIPageViewControllerDataSource
 extension WeatherPageViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = orderedViewControllers.firstIndex(of: viewController as! WeatherMainViewController) else {
+        guard let viewController = viewController as? WeatherMainViewController, let viewControllerIndex = orderedViewControllers.firstIndex(of: viewController) else {
             return nil
         }
         
@@ -104,7 +81,7 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = orderedViewControllers.firstIndex(of: viewController as! WeatherMainViewController) else {
+        guard let viewController = viewController as? WeatherMainViewController, let viewControllerIndex = orderedViewControllers.firstIndex(of: viewController) else {
             return nil
         }
         
@@ -122,11 +99,3 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
     }
     
 }
-
-//extension WeatherPageViewController: UIPageViewControllerDelegate {
-//
-//    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-//        notifyTutorialDelegateOfNewIndex()
-//    }
-//
-//}

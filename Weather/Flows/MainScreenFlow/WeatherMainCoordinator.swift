@@ -35,6 +35,13 @@ final class WeatherMainCoordinator: Coordinator {
         settingsCoordinator.start()
     }
     
+    func pushGeolocationViewController() {
+        let geolocationCoordinator = GeolocationCoordinator(controller: navigator, parent: self)
+        geolocationCoordinator.navigator = navigator
+        childCoordinators.append(geolocationCoordinator)
+        geolocationCoordinator.start()
+    }
+    
     func pushHourlyWeatherViewController(cachedWeather: CachedWeather?) {
         let hourlyWeatherCoordinator = HourlyWeatherCoordinator(controller: navigator, parent: self)
         hourlyWeatherCoordinator.navigator = navigator
@@ -53,11 +60,6 @@ final class WeatherMainCoordinator: Coordinator {
     }
     
     func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
+        childCoordinators = childCoordinators.filter { $0 !== child }
     }
 }

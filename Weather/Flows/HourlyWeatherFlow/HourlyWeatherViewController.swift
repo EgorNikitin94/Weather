@@ -100,7 +100,6 @@ final class HourlyWeatherViewController: UIViewController {
     }
     
     private func setupLayout() {
-        
         view.addSubview(backButton)
         view.addSubview(titleLabel)
         view.addSubview(cityNameLabel)

@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-final class OnboardingViewController: UIViewController {
+final class GeolocationViewController: UIViewController {
     
-    var coordinator: OnboardingCoordinator?
+    var coordinator: GeolocationCoordinator?
     
     private lazy var womanWithUmbrellaImageView: UIImageView = {
         $0.image = UIImage(named: "WomanUmbrella")
@@ -83,7 +83,7 @@ final class OnboardingViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //coordinator?.didFinishOnboarding()
+        //coordinator?.didFinishGeolocation()
     }
     
     override func viewDidLoad() {
@@ -97,24 +97,33 @@ final class OnboardingViewController: UIViewController {
     
     
     @objc private func agreeUseGeolocation() {
-        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
-        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
         if LocationManager.sharedInstance.checkAuthorizationStatus() {
-            coordinator?.pushWeatherMainViewController()
+            
+            if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+                coordinator?.popToWeatherMainViewController()
+            } else {
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+                coordinator?.pushSettingsViewController()
+            }
+            
         } else {
             coordinator?.showAlert()
+        }
+    }
+    
+    @objc private func doNotAgreeUseGeolocation() {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+            coordinator?.popToWeatherMainViewController()
+        } else {
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+            coordinator?.pushSettingsViewController()
         }
         
     }
     
-    @objc private func doNotAgreeUseGeolocation() {
-        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
-        UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
-        coordinator?.pushWeatherMainViewController()
-    }
-    
     private func setupLayout() {
-        
         view.addSubview(womanWithUmbrellaImageView)
         view.addSubview(titleLabel)
         view.addSubview(descriptionLabel)

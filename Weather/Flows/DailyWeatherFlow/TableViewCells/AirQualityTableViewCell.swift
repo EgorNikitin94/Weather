@@ -64,7 +64,6 @@ final class AirQualityTableViewCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        
         contentView.addSubview(titleLabel)
         contentView.addSubview(airQualityNumberLabel)
         contentView.addSubview(airQualityLabel)

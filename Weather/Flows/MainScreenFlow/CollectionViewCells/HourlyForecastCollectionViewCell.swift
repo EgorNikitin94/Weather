@@ -61,7 +61,6 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
     }
     
     func configureSelectedItem() {
-        
         let shadowPath0 = UIBezierPath(roundedRect: contentView.bounds, cornerRadius: 22)
         
         shadowLayer.shadowPath = shadowPath0.cgPath

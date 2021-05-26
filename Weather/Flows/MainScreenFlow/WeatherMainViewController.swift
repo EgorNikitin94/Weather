@@ -9,8 +9,8 @@ import UIKit
 
 enum MainWeatherControllerState {
     case currentLocationWeather
-    case emptyWithPlus
     case selectedCityWeather
+    case emptyWithPlus
 }
 
 final class WeatherMainViewController: UIViewController {
@@ -33,11 +33,7 @@ final class WeatherMainViewController: UIViewController {
         }
     }
     
-    var weatherPageViewController: WeatherPageViewController? {
-        didSet {
-            //weatherPageViewController?.weatherDelegate = self
-        }
-    }
+    var weatherPageViewController: WeatherPageViewController?
     
     private lazy var cityNameLabel: UILabel = {
         $0.textColor = .white
@@ -59,7 +55,7 @@ final class WeatherMainViewController: UIViewController {
     private lazy var geolocationButton: UIButton = {
         $0.setImage(UIImage(named: "Mark"), for: .normal)
         $0.tintColor = .black
-        $0.addTarget(self, action: #selector(useGeolocation), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(useGeolocationButtonTapped), for: .touchUpInside)
         return $0
     }(UIButton())
     
@@ -182,19 +178,15 @@ final class WeatherMainViewController: UIViewController {
         setupLayout()
         updateWeatherData()
         getWeatherData()
-        cityNameLabel.attributedText = viewModelOutput.configureCityName()
-        cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         getCityName()
     }
     
     private func getWeatherData() {
         viewModelOutput.onWeatherLoaded = { bool in
             if bool {
-                //DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    self.updateWeatherData()
-                //}
-                
-                
+                self.updateWeatherData()
+            } else {
+                //show alert
             }
         }
     }
@@ -209,11 +201,17 @@ final class WeatherMainViewController: UIViewController {
                 }
                 self.cityNameLabel.attributedText = NSMutableAttributedString(string: cityName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
                 self.cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+            } else {
+                //show alert
             }
         }
     }
     
     private func updateWeatherData() {
+        if let cityName = viewModelOutput.configureCityName() {
+            cityNameLabel.attributedText = cityName
+            cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
+        }
         mainWeatherInformationView.viewConfigure = viewModelOutput.configureMainInformationView()
         hourlyForecastCollectionView.reloadData()
         dailyForecastCollectionView.reloadData()
@@ -240,7 +238,7 @@ final class WeatherMainViewController: UIViewController {
             guard let self = self else { return }
             let cityName = alertController.textFields?[0].text
             if let name = cityName, name != "" {
-                self.viewModelOutput.onLoadCityWeather?(name)
+                self.viewModelOutput.onLoadNewCityWeather?(name)
                 self.changeStateVC()
                 let weatherMainViewController = FlowFactory.makeWeatherMainViewController(coordinator: self.coordinator, stateViewController: .emptyWithPlus, pageViewController: self.weatherPageViewController)
                 self.weatherPageViewController?.appendNewViewController(newViewController: weatherMainViewController)
@@ -261,8 +259,8 @@ final class WeatherMainViewController: UIViewController {
         coordinator?.pushSettingsViewController()
     }
     
-    @objc private func useGeolocation() {
-        print("CityButton")
+    @objc private func useGeolocationButtonTapped() {
+        coordinator?.pushGeolocationViewController()
     }
     
     @objc private func detailsLabelTapped() {
@@ -368,7 +366,6 @@ final class WeatherMainViewController: UIViewController {
         }
     }
     
-    
 }
 
 
@@ -430,14 +427,3 @@ extension WeatherMainViewController: UICollectionViewDataSource, UICollectionVie
         return UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 15)
     }
 }
-
-//extension WeatherMainViewController: WeatherPageViewControllerDelegate {
-//
-//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, weatherMainViewController: WeatherMainViewController, didUpdatePageCount count: Int) {
-//        pageControl.numberOfPages = count
-//    }
-//
-//    func weatherPageViewController(weatherPageViewController: WeatherPageViewController, didUpdatePageIndex index: Int) {
-//        pageControl.currentPage = index
-//    }
-//}

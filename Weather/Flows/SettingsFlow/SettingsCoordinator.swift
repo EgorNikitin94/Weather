@@ -29,16 +29,18 @@ class SettingsCoordinator: Coordinator {
         parentCoordinator.childDidFinish(self)
     }
     
+    
+    func pushWeatherMainViewController() {
+        let weatherMainCoordinator = WeatherMainCoordinator(controller: navigator, parent: self)
+        childCoordinators.append(weatherMainCoordinator)
+        weatherMainCoordinator.start()
+    }
+    
     func popToWeatherMainViewController() {
         navigator.popViewController(animated: true)
     }
     
     func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
+        childCoordinators = childCoordinators.filter { $0 !== child }
     }
 }

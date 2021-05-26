@@ -72,7 +72,6 @@ final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
     }
     
     public func configureHourlyCell(with object: CachedHourly) -> HourlyWeather? {
-        
         guard let weather = cachedWeather else {
             return nil
         }

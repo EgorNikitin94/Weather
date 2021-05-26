@@ -174,7 +174,6 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        
         contentView.addSubview(sunAndMoonLabel)
         contentView.addSubview(moonPhaseImage)
         contentView.addSubview(moonPhaseLabel)
