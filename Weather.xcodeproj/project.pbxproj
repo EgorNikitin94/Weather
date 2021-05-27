@@ -52,6 +52,7 @@
 		50E29CD42640067400066B93 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50E29CD22640067400066B93 /* LaunchScreen.storyboard */; };
 		50E29CE0264010D000066B93 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E29CDF264010D000066B93 /* AppColors.swift */; };
 		50E29CEB2640419300066B93 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50E29CEA2640411500066B93 /* Rubik-Regular.ttf */; };
+		50EE20F2265FF29E002F7B77 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EE20F1265FF29E002F7B77 /* MenuView.swift */; };
 		50F55C10265553A30066E42F /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F55C0F265553A30066E42F /* Direction.swift */; };
 		50F55C1326555DC70066E42F /* SunAndMoonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F55C1226555DC60066E42F /* SunAndMoonTableViewCell.swift */; };
 		50F73DD62644935900D739BD /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F73DD52644935900D739BD /* CustomSegmentedControl.swift */; };
@@ -107,6 +108,7 @@
 		50E29CD52640067400066B93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50E29CDF264010D000066B93 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 		50E29CEA2640411500066B93 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		50EE20F1265FF29E002F7B77 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		50F55C0F265553A30066E42F /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		50F55C1226555DC60066E42F /* SunAndMoonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunAndMoonTableViewCell.swift; sourceTree = "<group>"; };
 		50F73DD52644935900D739BD /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				507915C9264A947300DBD9C2 /* WeatherMainViewModel.swift */,
 				5000AD67264D645E00E39E71 /* WeatherPageViewController.swift */,
 				50DC4AF72641B7E900F2FAE8 /* WeatherMainViewController.swift */,
+				50EE20F1265FF29E002F7B77 /* MenuView.swift */,
 				50FA41CB26481F590073026A /* MainWeatherInformationView.swift */,
 				5059ECC42657EDD600C4E874 /* CollectionViewCells */,
 				5055E3272653179900E48660 /* CustomPageControl.swift */,
@@ -530,6 +533,7 @@
 				50E29CC92640066D00066B93 /* GeolocationViewController.swift in Sources */,
 				50DC4AF82641B7E900F2FAE8 /* WeatherMainViewController.swift in Sources */,
 				5094E3A32642BAD400140AD2 /* AppCoordinator.swift in Sources */,
+				50EE20F2265FF29E002F7B77 /* MenuView.swift in Sources */,
 				5029A58B265A6B150024D741 /* ChartView.swift in Sources */,
 				5094E3C22642E99E00140AD2 /* SettingsViewController.swift in Sources */,
 				5093B82A2649E99600ED31B8 /* DailyForecastCollectionViewCell.swift in Sources */,

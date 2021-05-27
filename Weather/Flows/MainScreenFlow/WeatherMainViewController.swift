@@ -20,6 +20,8 @@ final class WeatherMainViewController: UIViewController {
     
     private var stateViewController: MainWeatherControllerState
     
+    private var xPoint: CGFloat = 0.0
+    
     private var viewModelOutput: WeatherMainViewModelOutput
     
     var currentPage: Int? {
@@ -35,6 +37,24 @@ final class WeatherMainViewController: UIViewController {
     }
     
     var weatherPageViewController: WeatherPageViewController?
+    
+    private lazy var menuView: MenuView = {
+        $0.frame = CGRect(x: -(UIScreen.main.bounds.width - 75), y: 0, width: UIScreen.main.bounds.width - 75, height: UIScreen.main.bounds.height - 44)
+        $0.isHidden = true
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(pan))
+        $0.addGestureRecognizer(panGestureRecognizer)
+        return $0
+    }(MenuView())
+    
+    private lazy var blurView: UIView = {
+        $0.backgroundColor = UIColor(red: 0.175, green: 0.163, blue: 0.163, alpha: 1)
+        $0.alpha = 0
+        $0.isHidden = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(blurViewTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGestureRecognizer)
+        return $0
+    }(UIView())
     
     private lazy var cityNameLabel: UILabel = {
         $0.textColor = .white
@@ -172,6 +192,11 @@ final class WeatherMainViewController: UIViewController {
         super.viewWillAppear(animated)
         updateWeatherData()
         checkTracingSettingsChanges()
+        if menuView.isHidden == false {
+            menuView.frame.origin.x = -(UIScreen.main.bounds.width - 75)
+            menuView.isHidden = true
+            blurView.isHidden = true
+        }
     }
     
     override func viewDidLoad() {
@@ -279,8 +304,56 @@ final class WeatherMainViewController: UIViewController {
         weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)
     }
     
+    @objc private func blurViewTapped() {
+        UIView.animate(withDuration: 0.25) {
+            self.menuView.frame.origin.x = -(UIScreen.main.bounds.width - 75)
+            self.blurView.alpha = 0
+        } completion: { (bool) in
+            self.menuView.isHidden = true
+            self.blurView.isHidden = true
+        }
+    }
+    
+    @objc private func pan(panGestureRecognizer: UIPanGestureRecognizer) {
+        if panGestureRecognizer.state == .began {
+            xPoint = menuView.frame.origin.x
+        }
+        
+        panGestureRecognizer.translation(in: self.view)
+        
+        let xCoordinate = panGestureRecognizer.translation(in: self.view).x
+        
+        if xCoordinate < 0.0 {
+            let newXPoint = xPoint + xCoordinate
+            menuView.frame.origin.x = newXPoint
+        }
+
+        if panGestureRecognizer.state == .ended {
+            if xCoordinate < -(menuView.frame.width / 4) {
+                UIView.animate(withDuration: 0.25) {
+                    self.menuView.frame.origin.x = -(UIScreen.main.bounds.width - 75)
+                    self.blurView.alpha = 0
+                } completion: { (bool) in
+                    self.menuView.isHidden = true
+                    self.blurView.isHidden = true
+                }
+            } else {
+                UIView.animate(withDuration: 0.25) {
+                    self.menuView.frame.origin.x = 0.0
+                }
+            }
+            
+        }
+    }
+    
     @objc private func openSettings() {
-        coordinator?.pushSettingsViewController()
+        //coordinator?.pushSettingsViewController()
+        menuView.isHidden = false
+        blurView.isHidden = false
+        UIView.animate(withDuration: 0.5) {
+            self.menuView.frame.origin.x = 0
+            self.blurView.alpha = 0.7
+        }
     }
     
     @objc private func useGeolocationButtonTapped() {
@@ -316,6 +389,8 @@ final class WeatherMainViewController: UIViewController {
         view.addSubview(daysCountLabel)
         view.addSubview(dailyForecastCollectionView)
         view.addSubview(bottomSafeArea)
+        view.addSubview(blurView)
+        view.addSubview(menuView)
         
         cityNameLabel.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -389,6 +464,13 @@ final class WeatherMainViewController: UIViewController {
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
             make.height.equalTo(44)
+        }
+        
+        blurView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(bottomSafeArea.snp.top)
         }
     }
     

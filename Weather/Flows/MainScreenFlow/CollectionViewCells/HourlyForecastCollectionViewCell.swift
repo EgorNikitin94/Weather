@@ -111,7 +111,7 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        timeLabel.textColor = .black
+        timeLabel.textColor = UIColor(red: 0.613, green: 0.592, blue: 0.592, alpha: 1)
         temperatureLabel.textColor = .black
         gradientLayer.removeFromSuperlayer()
         shadowLayer.removeFromSuperlayer()
