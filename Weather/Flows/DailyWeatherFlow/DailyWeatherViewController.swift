@@ -9,6 +9,8 @@ import UIKit
 
 final class DailyWeatherViewController: UIViewController {
     
+    //MARK: - Properties
+    
     var coordinator: DailyWeatherCoordinator?
     
     var selectedIndex: Int = 1
@@ -75,7 +77,7 @@ final class DailyWeatherViewController: UIViewController {
     }(UIView())
     
     
-    // Mark: - init
+    // MARK: - init
     
     init(viewModel: DailyWeatherViewModelOutput) {
         self.viewModelOutput = viewModel
@@ -85,6 +87,8 @@ final class DailyWeatherViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Lifecycle
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -118,9 +122,13 @@ final class DailyWeatherViewController: UIViewController {
         daysCollectionView.scrollToItem(at: IndexPath(item: selectedIndex, section: 0), at: .left, animated: true)
     }
     
+    //MARK: - Actions
+    
     @objc private func backButtonTapped() {
         coordinator?.popToWeatherMainViewController()
     }
+    
+    //MARK: - Setup layout
     
     private func setupTableView() {
         tableView.backgroundColor = .white
@@ -191,6 +199,7 @@ final class DailyWeatherViewController: UIViewController {
     }
 }
 
+//MARK: - Data source and delegate
 
 extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -216,7 +225,6 @@ extension DailyWeatherViewController: UICollectionViewDataSource, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         return CGSize(width: 88, height: 36)
     }
     

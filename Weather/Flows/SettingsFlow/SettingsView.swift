@@ -9,6 +9,8 @@ import UIKit
 
 final class SettingsView: UIView {
     
+    //MARK: - Properties
+    
     var onSetupButtonTapped: (() -> Void)?
     
     private lazy var settingsLabel: UILabel = {
@@ -76,7 +78,9 @@ final class SettingsView: UIView {
     private let timeFormatSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "12", rightSideText: "24", userDefaultsKey: UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue)
     
     private let notificationSegmentedControl: CustomSegmentedControl = CustomSegmentedControl(leftSideText: "On", rightSideText: "Off", userDefaultsKey: UserDefaultsKeys.isNotifyBoolKey.rawValue)
-    
+
+    //MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = AppColors.sharedInstance.accentLightBlue
@@ -87,9 +91,14 @@ final class SettingsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Actions
+
     @objc private func setupButtonTapped() {
         onSetupButtonTapped?()
     }
+    
+
+    //MARK: - Life cycle
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -102,7 +111,9 @@ final class SettingsView: UIView {
         notificationSegmentedControl.layer.cornerRadius = 5
         notificationSegmentedControl.clipsToBounds = true
     }
-    
+
+    //MARK: - Setup layout
+
     private func setupLayout() {
         self.addSubview(settingsLabel)
         self.addSubview(temperatureLabel)

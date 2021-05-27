@@ -9,6 +9,8 @@ import UIKit
 
 final class HourlyForecastCollectionViewCell: UICollectionViewCell {
     
+    //MARK: - Configure
+    
     var configure: (time: String, image: UIImage?, temperature: String)? {
         didSet {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -19,6 +21,8 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
             temperatureLabel.attributedText = NSMutableAttributedString(string: configure?.temperature ?? "0º", attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
+    
+    //MARK: - Properties
     
     let shadowLayer = CALayer()
     
@@ -48,6 +52,7 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         return $0
     }(UIImageView())
     
+    //MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -59,6 +64,8 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Methods
     
     func configureSelectedItem() {
         let shadowPath0 = UIBezierPath(roundedRect: contentView.bounds, cornerRadius: 22)
@@ -117,6 +124,8 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         contentView.layer.borderWidth = 0.5
         contentView.layer.borderColor = UIColor(red: 0.671, green: 0.737, blue: 0.918, alpha: 1).cgColor
     }
+    
+    //MARK: - Setup layout
     
     private func setupLayout() {
         contentView.addSubview(timeLabel)

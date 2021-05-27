@@ -238,13 +238,13 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		50CAE689265BE0FF009774DC /* Realm */ = {
+		50CAE689265BE0FF009774DC /* Realm data manager */ = {
 			isa = PBXGroup;
 			children = (
 				50CAE68B265BE4E6009774DC /* RealmModels.swift */,
 				50CAE68E265BFBF9009774DC /* RealmDataManager.swift */,
 			);
-			path = Realm;
+			path = "Realm data manager";
 			sourceTree = "<group>";
 		};
 		50DC4AEE2641B1A500F2FAE8 /* Location manager */ = {
@@ -286,7 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				50DC4AEF2641B1BE00F2FAE8 /* NetworkService */,
-				50CAE689265BE0FF009774DC /* Realm */,
+				50CAE689265BE0FF009774DC /* Realm data manager */,
 				50DC4AEE2641B1A500F2FAE8 /* Location manager */,
 			);
 			path = Services;

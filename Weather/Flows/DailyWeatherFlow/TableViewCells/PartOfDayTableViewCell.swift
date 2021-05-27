@@ -9,6 +9,8 @@ import UIKit
 
 final class PartOfDayTableViewCell: UITableViewCell {
     
+    //MARK: - Configure
+    
     var configure: Day? {
         didSet {
             partOfDay.attributedText = configure?.dayPart
@@ -23,6 +25,8 @@ final class PartOfDayTableViewCell: UITableViewCell {
             cloudinessInfoLabel.attributedText = configure?.cloudiness
         }
     }
+    
+    //MARK: - Properties
     
     private lazy var partOfDay: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -180,6 +184,8 @@ final class PartOfDayTableViewCell: UITableViewCell {
         return $0
     }(UIView())
     
+    //MARK: - Init
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -191,6 +197,8 @@ final class PartOfDayTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Setup layout
     
     private func setupLayout() {
         contentView.addSubview(partOfDay)

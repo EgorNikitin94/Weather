@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CustomPageControl: UIPageControl {
+final class CustomPageControl: UIPageControl {
     
     @IBInspectable var currentPageImage: UIImage?
     

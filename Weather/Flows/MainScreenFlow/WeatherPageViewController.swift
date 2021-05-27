@@ -9,9 +9,12 @@ import UIKit
 
 
 final class WeatherPageViewController: UIPageViewController {
-    
+    //MARK: - Properties
+
     var orderedViewControllers: [WeatherMainViewController] = []
-    
+
+    //MARK: - Life cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,13 +27,36 @@ final class WeatherPageViewController: UIPageViewController {
         
     }
     
+    //MARK: - Methods
+    
+    func insertLocationWeatherMainViewController(weatherMainViewController: WeatherMainViewController) {
+        orderedViewControllers.insert(weatherMainViewController, at: 0)
+        
+        for (index, weatherMainViewController) in orderedViewControllers.enumerated() {
+            weatherMainViewController.numberOfPages = orderedViewControllers.count
+            weatherMainViewController.currentPage = index
+        }
+    }
+    
+    func deleteLocationWeatherMainViewController() {
+        if !orderedViewControllers.isEmpty {
+            orderedViewControllers.removeFirst()
+        }
+        
+        for (index, weatherMainViewController) in orderedViewControllers.enumerated() {
+            weatherMainViewController.numberOfPages = orderedViewControllers.count
+            weatherMainViewController.currentPage = index
+        }
+        
+        RealmDataManager.sharedInstance.deleteCurrentLocationCachedWeather()
+    }
     
     func appendNewViewController(newViewController: WeatherMainViewController) {
         orderedViewControllers.append(newViewController)
         
         for (index, weatherMainViewController) in orderedViewControllers.enumerated() {
             weatherMainViewController.numberOfPages = orderedViewControllers.count
-            newViewController.currentPage = index
+            weatherMainViewController.currentPage = index
         }
     }
     
@@ -89,7 +115,8 @@ extension WeatherPageViewController: UIPageViewControllerDataSource {
         let orderedViewControllersCount = orderedViewControllers.count
         
         guard orderedViewControllersCount != nextIndex else {
-            return nil            }
+            return nil
+        }
         
         guard orderedViewControllersCount > nextIndex else {
             return nil

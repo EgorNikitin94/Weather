@@ -9,6 +9,8 @@ import UIKit
 
 final class DailyWeatherCoordinator: Coordinator {
     
+    //MARK: - Properties
+    
     unowned var parentCoordinator: Coordinator
     
     var cachedWeather: CachedWeather?
@@ -18,10 +20,14 @@ final class DailyWeatherCoordinator: Coordinator {
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
     
+    //MARK: - Init
+    
     init(controller: UINavigationController, parent: Coordinator) {
         self.navigator = controller
         self.parentCoordinator = parent
     }
+    
+    //MARK: - Methods
     
     func start() {
         let dailyWeatherViewModel = DailyWeatherViewModel(cachedWeather: cachedWeather)

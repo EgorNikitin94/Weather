@@ -9,6 +9,8 @@ import UIKit
 
 final class HourlyTableViewCell: UITableViewCell {
     
+    //MARK: - Configure cell
+    
     var configure: HourlyWeather? {
         didSet {
             dateLabel.attributedText = configure?.date
@@ -21,6 +23,8 @@ final class HourlyTableViewCell: UITableViewCell {
             cloudinessInfoLabel.attributedText = configure?.cloudiness
         }
     }
+    
+    //MARK: - Properties
     
     private lazy var dateLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -110,6 +114,8 @@ final class HourlyTableViewCell: UITableViewCell {
         return $0
     }(UILabel())
 
+    //MARK: - Init
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -121,6 +127,8 @@ final class HourlyTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Setup layout
     
     private func setupLayout() {
         contentView.addSubview(dateLabel)

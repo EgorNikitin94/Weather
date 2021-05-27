@@ -9,6 +9,8 @@ import UIKit
 
 final class DailyForecastCollectionViewCell: UICollectionViewCell {
     
+    //MARK: - Configure
+    
     var configure: (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)? {
         didSet {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -23,6 +25,8 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
             temperatureLabel.attributedText = NSMutableAttributedString(string: configure?.temperature ?? "0º -0º", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
+    
+    //MARK: - Properties
     
     private lazy var dateLabel: UILabel = {
         $0.textColor = UIColor(red: 0.604, green: 0.587, blue: 0.587, alpha: 1)
@@ -70,6 +74,8 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
         return $0
     }(UIImageView())
     
+    //MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -80,6 +86,8 @@ final class DailyForecastCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Setup layout
     
     private func setupCellView() {
         contentView.backgroundColor = AppColors.sharedInstance.accentLightBlue

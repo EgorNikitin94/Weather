@@ -8,6 +8,7 @@
 enum UserDefaultsKeys: String {
     case isSecondLaunchBoolKey
     case isTrackingBoolKey
+    case isTrackingSettingsChanged
     case isCelsiusChosenBoolKey
     case isMiChosenBoolKey
     case is12TimeFormalChosenBoolKey

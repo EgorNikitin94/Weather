@@ -15,12 +15,18 @@ protocol HourlyWeatherViewModelOutput {
 }
 
 final class HourlyWeatherViewModel: HourlyWeatherViewModelOutput {
+    
+    //MARK: - Properties
         
     private let cachedWeather: CachedWeather?
+    
+    //MARK: - Init
     
     init(cachedWeather: CachedWeather?) {
         self.cachedWeather = cachedWeather
     }
+    
+    //MARK: - Configure methods
     
     public func getTimezoneOffset() -> (timezoneOffset: Int, moscowTimeOffset: Int) {
         guard let timezoneOffset = cachedWeather?.timezoneOffset, let moscowTimeOffset = cachedWeather?.moscowTimeOffset else {

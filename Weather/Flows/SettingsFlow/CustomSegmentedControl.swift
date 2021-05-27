@@ -9,6 +9,8 @@ import UIKit
 
 final class CustomSegmentedControl: UIView {
     
+    //MARK: - Properties
+    
     private let userDefaultsKey: String
     
     private let selectedViewColor: UIColor = AppColors.sharedInstance.accentBlue
@@ -40,6 +42,8 @@ final class CustomSegmentedControl: UIView {
         $0.font = UIFont(name: "Rubik-Regular", size: 16)
         return $0
     }(UILabel())
+
+    //MARK: - Init
     
     init(leftSideText: String, rightSideText: String, userDefaultsKey: String) {
         self.userDefaultsKey = userDefaultsKey
@@ -59,6 +63,8 @@ final class CustomSegmentedControl: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Actions
+
     @objc private func tapLeftSide() {
         if UserDefaults.standard.bool(forKey: userDefaultsKey) {
             // Nothing happens
@@ -83,7 +89,9 @@ final class CustomSegmentedControl: UIView {
             // Nothing happens
         }
     }
-    
+ 
+    //MARK: - Setup layout
+
     private func setupLayout() {
         self.addSubview(leftView)
         self.addSubview(rightView)

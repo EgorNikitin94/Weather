@@ -9,6 +9,8 @@ import UIKit
 
 final class SettingsViewController: UIViewController {
     
+    //MARK: - Properties
+
     var coordinator: SettingsCoordinator?
     
     private lazy var settingsView: SettingsView = {
@@ -35,6 +37,8 @@ final class SettingsViewController: UIViewController {
         return $0
     }(UIImageView())
     
+    //MARK: - Life cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
@@ -51,6 +55,7 @@ final class SettingsViewController: UIViewController {
         navigationItem.hidesBackButton = true
     }
     
+    //MARK: - Actions
     
     private func onSetupButtonTapped() {
         if let settingsCoordinator = coordinator {
@@ -58,13 +63,16 @@ final class SettingsViewController: UIViewController {
                 if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
                     settingsCoordinator.popToWeatherMainViewController()
                 } else {
+                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
                     settingsCoordinator.pushWeatherMainViewController()
                 }
                 
             }
         }
     }
-    
+
+    //MARK: - Setup layout
+
     private func setupLayout() {
         view.addSubview(settingsView)
         view.addSubview(topCloudImageView)

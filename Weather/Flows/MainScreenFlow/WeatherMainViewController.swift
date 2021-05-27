@@ -14,7 +14,8 @@ enum MainWeatherControllerState {
 }
 
 final class WeatherMainViewController: UIViewController {
-    
+    //MARK: - Properties
+
     var coordinator: WeatherMainCoordinator?
     
     private var stateViewController: MainWeatherControllerState
@@ -23,13 +24,13 @@ final class WeatherMainViewController: UIViewController {
     
     var currentPage: Int? {
         didSet {
-            pageControl.currentPage = currentPage ?? 2
+            pageControl.currentPage = currentPage ?? 0
         }
     }
     
     var numberOfPages: Int? {
         didSet {
-            pageControl.numberOfPages = numberOfPages ?? 2
+            pageControl.numberOfPages = numberOfPages ?? 1
         }
     }
     
@@ -153,7 +154,7 @@ final class WeatherMainViewController: UIViewController {
         return $0
     }(UIView())
     
-    // Mark: - init
+    // MARK: - Init
     
     init(viewModel: WeatherMainViewModelOutput, stateViewController: MainWeatherControllerState) {
         self.viewModelOutput = viewModel
@@ -164,10 +165,13 @@ final class WeatherMainViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    //MARK: - Life cycle
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateWeatherData()
+        checkTracingSettingsChanges()
     }
     
     override func viewDidLoad() {
@@ -180,13 +184,15 @@ final class WeatherMainViewController: UIViewController {
         getWeatherData()
         getCityName()
     }
-    
+
+    //MARK: - Methods
+
     private func getWeatherData() {
         viewModelOutput.onWeatherLoaded = { bool in
             if bool {
                 self.updateWeatherData()
             } else {
-                //show alert
+                self.coordinator?.showNetworkAlert()
             }
         }
     }
@@ -202,7 +208,7 @@ final class WeatherMainViewController: UIViewController {
                 self.cityNameLabel.attributedText = NSMutableAttributedString(string: cityName, attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
                 self.cityNameLabel.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
             } else {
-                //show alert
+                self.coordinator?.showNetworkAlert()
             }
         }
     }
@@ -216,6 +222,22 @@ final class WeatherMainViewController: UIViewController {
         hourlyForecastCollectionView.reloadData()
         dailyForecastCollectionView.reloadData()
         
+    }
+    
+    private func checkTracingSettingsChanges() {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+            && UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue) {
+            /// insert viewController to ordered and data in realm
+            let newViewController = FlowFactory.makeWeatherMainViewController(coordinator: self.coordinator, stateViewController: .currentLocationWeather, pageViewController: self.weatherPageViewController)
+            self.weatherPageViewController?.insertLocationWeatherMainViewController(weatherMainViewController: newViewController)
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue)
+            
+        } else if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+                    && UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue) {
+            /// remove viewController from ordered and data in realm
+            self.weatherPageViewController?.deleteLocationWeatherMainViewController()
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue)
+        }
     }
     
     private func changeStateVC() {
@@ -234,7 +256,7 @@ final class WeatherMainViewController: UIViewController {
         alertController.addTextField { (text) in
             text.placeholder = "название города"
         }
-        let alertActionFind = UIAlertAction(title: "ОК", style: .default) { [weak self] (alert) in//
+        let alertActionFind = UIAlertAction(title: "ОК", style: .default) { [weak self] (alert) in
             guard let self = self else { return }
             let cityName = alertController.textFields?[0].text
             if let name = cityName, name != "" {
@@ -250,7 +272,9 @@ final class WeatherMainViewController: UIViewController {
         alertController.addAction(alertActionCancel)
         present(alertController, animated: true, completion: nil)
     }
-    
+
+    //MARK: - Actions
+
     @objc func didChangePageControlValue() {
         weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)
     }
@@ -276,7 +300,9 @@ final class WeatherMainViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
     }
-    
+
+    //MARK: - Setup layout
+
     private func setupLayout() {
         view.addSubview(cityNameLabel)
         view.addSubview(settingsButton)
@@ -368,8 +394,7 @@ final class WeatherMainViewController: UIViewController {
     
 }
 
-
-
+//MARK: - UICollectionViewDataSource and UICollectionViewDelegateFlowLayout
 
 extension WeatherMainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     

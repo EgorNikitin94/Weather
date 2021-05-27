@@ -7,17 +7,23 @@
 
 import UIKit
 
-class SettingsCoordinator: Coordinator {
+final class SettingsCoordinator: Coordinator {
+    
+    //MARK: - Properties
     
     unowned var parentCoordinator: Coordinator
     
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
     
+    //MARK: - Init
+
     init(controller: UINavigationController, parent: Coordinator) {
         self.navigator = controller
         self.parentCoordinator = parent
     }
+    
+    //MARK: - Methods
     
     func start() {
         let settingsViewController = SettingsViewController()

@@ -9,6 +9,8 @@ import UIKit
 
 final class DayCollectionViewCell: UICollectionViewCell {
     
+    //MARK: - Configure
+    
     var configure: String? {
         didSet {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -16,6 +18,8 @@ final class DayCollectionViewCell: UICollectionViewCell {
             dateLabel.attributedText = NSMutableAttributedString(string: configure ?? "", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
+    
+   //MARK: - Properties
     
     override var isSelected: Bool {
         willSet(newValue) {
@@ -37,6 +41,8 @@ final class DayCollectionViewCell: UICollectionViewCell {
         return $0
     }(UILabel())
     
+    //MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -49,10 +55,13 @@ final class DayCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Setup layout
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         isSelected = false
     }
+    
     
     private func setupCellView() {
         contentView.backgroundColor = .white

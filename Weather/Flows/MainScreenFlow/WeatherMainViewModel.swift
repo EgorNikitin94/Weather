@@ -24,6 +24,8 @@ protocol WeatherMainViewModelOutput {
 
 final class WeatherMainViewModel: WeatherMainViewModelOutput {
     
+    //MARK: - Properties
+
     var onWeatherLoaded: ((Bool) -> Void)?
     
     var onCityLoaded: ((Bool, String?) -> Void)?
@@ -37,6 +39,8 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     }
     
     var cachedWeather: CachedWeather?
+    
+    //MARK: - Configure Methods
     
     public func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
         guard let object = cachedWeather else {
@@ -163,6 +167,8 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         }
     }
     
+    //MARK: - Network Methods
+    
     private func loadCityAndWeatherData(stateVC: MainWeatherControllerState) {
         switch stateVC {
         case .currentLocationWeather:
@@ -208,11 +214,10 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     }
     
     private func chooseActionForRealm(weatherData: WeatherData) {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+        if RealmDataManager.sharedInstance.isRealmContainsCurrentLocationCachedWeather() {
             RealmDataManager.sharedInstance.updateCachedWeather(weatherData, isCurrentLocation: true)
         } else {
             RealmDataManager.sharedInstance.addCachedWeather(weatherData, isCurrentLocation: true)
-            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue)
         }
     }
     
@@ -256,6 +261,8 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         }
     }
     
+
+    //MARK: - Converting Methods
     
     private func convertTemperature(_ temperature: Double) -> Double {
         if UserDefaults.standard.bool(forKey:UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue) {

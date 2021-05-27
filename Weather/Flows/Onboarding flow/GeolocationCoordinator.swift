@@ -9,18 +9,27 @@ import UIKit
 
 final class GeolocationCoordinator: Coordinator {
     
+    //MARK: - Properties
+    
     unowned var parentCoordinator: Coordinator
+    
+    private let viewControllerState: GeolocationViewControllerState
     
     var navigator: UINavigationController
     var childCoordinators = [Coordinator]()
     
-    init(controller: UINavigationController, parent: Coordinator) {
+    //MARK: - Init
+
+    init(controller: UINavigationController, viewControllerState: GeolocationViewControllerState, parent: Coordinator) {
         self.navigator = controller
+        self.viewControllerState = viewControllerState
         self.parentCoordinator = parent
     }
     
+    //MARK: - Methods
+    
     func start() {
-        let geolocationViewController = GeolocationViewController()
+        let geolocationViewController = GeolocationViewController(stateViewController: viewControllerState)
         geolocationViewController.coordinator = self
         navigator.pushViewController(geolocationViewController, animated: true)
     }
@@ -38,9 +47,8 @@ final class GeolocationCoordinator: Coordinator {
     
     func showAlert() {
         let alertViewController = UIAlertController(title: "Внимание!", message: "Вы не дали разрешение на отслеживание геолокации. Если вы хотите определить автоматически ваше местоположение, перейдите в настройки.", preferredStyle: .alert)
-        let settingsAction = UIAlertAction(title: "Настройки", style: .default) { (action) in
-            //App-Prefs:root=General
-            guard let url = URL(string: "Prefs:root=Privacy&path=LOCATION") else {
+        let settingsAction = UIAlertAction(title: "перейти", style: .default) { (action) in
+            guard let url = URL(string: "\(UIApplication.openSettingsURLString)") else {
                 return
             }
             UIApplication.shared.open(url)

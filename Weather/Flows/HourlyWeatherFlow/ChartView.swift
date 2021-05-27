@@ -9,6 +9,8 @@ import UIKit
 
 final class ChartView: UIView {
     
+    //MARK: - Properties
+    
     private enum Constants {
         static let margin: CGFloat = 16.0
         static let topBorder: CGFloat = 31.0
@@ -41,6 +43,8 @@ final class ChartView: UIView {
         return self.graphHeight() + Constants.topBorder - yPoint // Переворот графика
     }
     
+    //MARK: - Init
+    
     init(hourlyWeather: [CachedHourly]?, timezoneOffset: Int, moscowTimeOffset: Int) {
         self.hourlyWeather = hourlyWeather
         self.timezoneOffset = timezoneOffset
@@ -52,6 +56,8 @@ final class ChartView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Draw (CoreGraphics)
     
     override func draw(_ rect: CGRect) {
         guard let weather = hourlyWeather else { return }
@@ -67,7 +73,7 @@ final class ChartView: UIView {
         
         let maxValue = getMaxWeatherTemperature(weatherTemperatureArray: weatherTemperatureArray)
         
-        // Drawing a line of a temperature graph
+        /// Drawing a line of a temperature graph
         
         AppColors.sharedInstance.dividerColor.setFill()
         AppColors.sharedInstance.dividerColor.setStroke()
@@ -85,7 +91,7 @@ final class ChartView: UIView {
         
         context.saveGState()
         
-        // Draw a gradient below the graph
+        /// Draw a gradient below the graph
         guard let clippingPath = graphPath.copy() as? UIBezierPath else {
             return
         }
@@ -136,7 +142,7 @@ final class ChartView: UIView {
         graphPath.stroke()
         
         
-        // Draw the circles on top of the graph stroke
+        /// Draw the circles on top of the graph stroke
         for i in 0 ..< weatherTemperatureArray.count {
             var point = CGPoint(x: columnXPoint(i), y: columnYPoint(weatherTemperatureArray[i], maxValue))
             point.x -= 2
@@ -155,7 +161,7 @@ final class ChartView: UIView {
             circle.fill()
         }
         
-        // Draw a line of probability of precipitation
+        /// Draw a line of probability of precipitation
         
         let precipitationPath = UIBezierPath()
         
@@ -181,7 +187,7 @@ final class ChartView: UIView {
         
         context.saveGState()
         
-        // Draw the rectangles on top of the precipitationPath stroke
+        /// Draw the rectangles on top of the precipitationPath stroke
         
         for i in 0 ..< weatherTemperatureArray.count {
             var point = CGPoint(x: xPoint(i), y: yPoint)
@@ -196,7 +202,7 @@ final class ChartView: UIView {
         
         context.saveGState()
         
-        // Draw dashesPath
+        /// Draw dashesPath
         
         let dashesPath = UIBezierPath()
         
@@ -219,6 +225,8 @@ final class ChartView: UIView {
         
         
     }
+    
+    //MARK: - Configure methods
     
     private func getWeatherTemperatureArray() -> [Double] {
         guard let weather = hourlyWeather else { return []}

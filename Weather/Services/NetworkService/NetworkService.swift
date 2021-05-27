@@ -44,7 +44,7 @@ final class NetworkService {
         }
     }
     
-    /// возвращает запрос почасовой на пять дней
+    /// отдает почасовое качество воздуха на пять дней, а нужно 7 дней. На семь дней нет бесплатного доступа
 //    static func airQualityData(locationCoordinate: LocationCoordinate, completion: @escaping ((WeatherData?) -> Void)) {
 //
 //        let apiString = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=50&lon=50&appid=\(ApiKeys.openWeather.rawValue)"

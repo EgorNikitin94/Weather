@@ -17,11 +17,17 @@ protocol DailyWeatherViewModelOutput {
 
 final class DailyWeatherViewModel: DailyWeatherViewModelOutput {
     
+    //MARK: - Properties
+    
     private let cachedWeather: CachedWeather?
+    
+    //MARK: - Init
     
     init(cachedWeather: CachedWeather?) {
         self.cachedWeather = cachedWeather
     }
+    
+    //MARK: - Configure methods
     
     public func configureCityName() -> NSMutableAttributedString? {
         guard let city = cachedWeather?.city else {

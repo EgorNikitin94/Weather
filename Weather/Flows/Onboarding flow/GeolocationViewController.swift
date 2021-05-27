@@ -8,9 +8,18 @@
 import UIKit
 import SnapKit
 
+enum GeolocationViewControllerState {
+    case onboarding
+    case openFromMainVC
+}
+
 final class GeolocationViewController: UIViewController {
     
+    //MARK: - Properties
+    
     var coordinator: GeolocationCoordinator?
+    
+    private var stateViewController: GeolocationViewControllerState
     
     private lazy var womanWithUmbrellaImageView: UIImageView = {
         $0.image = UIImage(named: "WomanUmbrella")
@@ -81,8 +90,22 @@ final class GeolocationViewController: UIViewController {
         return $0
     }(UILabel())
     
+    //MARK: - Init
+    
+    init(stateViewController: GeolocationViewControllerState) {
+        self.stateViewController = stateViewController
+        super .init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Life cycle
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        /// always get fatal error from here
         //coordinator?.didFinishGeolocation()
     }
     
@@ -94,13 +117,14 @@ final class GeolocationViewController: UIViewController {
         LocationManager.sharedInstance.requestAuthorization()
     }
     
-    
-    
+    //MARK: - Actions
+
     @objc private func agreeUseGeolocation() {
         if LocationManager.sharedInstance.checkAuthorizationStatus() {
             
-            if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+            if stateViewController == .openFromMainVC {
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue)
                 coordinator?.popToWeatherMainViewController()
             } else {
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
@@ -113,8 +137,9 @@ final class GeolocationViewController: UIViewController {
     }
     
     @objc private func doNotAgreeUseGeolocation() {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSecondLaunchBoolKey.rawValue) {
+        if stateViewController == .openFromMainVC {
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue)
             coordinator?.popToWeatherMainViewController()
         } else {
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
@@ -122,6 +147,8 @@ final class GeolocationViewController: UIViewController {
         }
         
     }
+    
+    //MARK: - Setup layout
     
     private func setupLayout() {
         view.addSubview(womanWithUmbrellaImageView)

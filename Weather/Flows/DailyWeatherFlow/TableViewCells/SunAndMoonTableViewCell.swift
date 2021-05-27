@@ -9,6 +9,8 @@ import UIKit
 
 final class SunAndMoonTableViewCell: UITableViewCell {
     
+    //MARK: - Configure
+    
     var configure: SunAndMoonPhase? {
         didSet {
             moonPhaseLabel.attributedText = configure?.moonPhase
@@ -20,6 +22,8 @@ final class SunAndMoonTableViewCell: UITableViewCell {
             moonsetTimeLabel.attributedText = configure?.moonsetTime
         }
     }
+    
+    //MARK: - Properties
     
     private lazy var sunAndMoonLabel: UILabel = {
         $0.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -160,6 +164,7 @@ final class SunAndMoonTableViewCell: UITableViewCell {
         return $0
     }(UILabel())
 
+    //MARK: - Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -172,6 +177,8 @@ final class SunAndMoonTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Setup layout
     
     private func setupLayout() {
         contentView.addSubview(sunAndMoonLabel)

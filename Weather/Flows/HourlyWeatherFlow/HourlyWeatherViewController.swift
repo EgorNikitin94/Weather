@@ -9,6 +9,8 @@ import UIKit
 
 final class HourlyWeatherViewController: UIViewController {
     
+    //MARK: - Properties
+    
     var coordinator: HourlyWeatherCoordinator?
     
     private var viewModelOutput: HourlyWeatherViewModelOutput
@@ -56,7 +58,7 @@ final class HourlyWeatherViewController: UIViewController {
     }
     
     
-    // Mark: - init
+    //MARK: - Init
     
     init(viewModel: HourlyWeatherViewModelOutput) {
         self.viewModelOutput = viewModel
@@ -66,6 +68,8 @@ final class HourlyWeatherViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //MARK: - Life cycle
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -87,14 +91,17 @@ final class HourlyWeatherViewController: UIViewController {
         cityNameLabel.attributedText = viewModelOutput.configureCityName()
     }
     
+    //MARK: - Actions
+    
     @objc private func backButtonTapped() {
         coordinator?.popToWeatherMainViewController()
     }
     
+    //MARK: - Setup layout
+    
     private func setupTableView() {
         tableView.backgroundColor = .white
         tableView.dataSource = self
-        //tableView.delegate = self
         tableView.register(HourlyTableViewCell.self, forCellReuseIdentifier: reuseID)
         tableView.separatorColor = AppColors.sharedInstance.dividerColor
     }
@@ -158,6 +165,7 @@ final class HourlyWeatherViewController: UIViewController {
     
 }
 
+//MARK: - UITableViewDataSource
 
 extension HourlyWeatherViewController: UITableViewDataSource {
     

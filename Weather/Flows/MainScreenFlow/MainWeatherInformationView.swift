@@ -9,6 +9,8 @@ import UIKit
 
 final class MainWeatherInformationView: UIView {
     
+    //MARK: - Configure
+    
     var viewConfigure: (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
         didSet {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -28,6 +30,8 @@ final class MainWeatherInformationView: UIView {
             currentDateLabel.attributedText = NSMutableAttributedString(string: viewConfigure?.currentDate ?? "", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         }
     }
+    
+    //MARK: - Properties
     
     private lazy var ellipseImage: UIImageView = {
         $0.image = UIImage(named: "Ellipse")
@@ -151,6 +155,7 @@ final class MainWeatherInformationView: UIView {
         return $0
     }(UILabel())
     
+    //MARK:- Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -163,8 +168,9 @@ final class MainWeatherInformationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:- Setup layout
+    
     private func setupLayout() {
-        
         self.addSubview(ellipseImage)
         self.addSubview(dailyTemperatureLabel)
         self.addSubview(currentTemperatureLabel)
@@ -272,7 +278,6 @@ final class MainWeatherInformationView: UIView {
         
         sunsetLabel.snp.makeConstraints { (make) in
             make.top.equalTo(sunsetImage.snp.bottom).offset(5)
-            //make.centerX.equalTo(sunsetImage)
             make.trailing.equalToSuperview().offset(-14)
         }
         
