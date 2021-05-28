@@ -127,6 +127,7 @@
 		5094E3C42642E9BF00140AD2 /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		5094E3C72642F04800140AD2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Medium.ttf"; sourceTree = "<group>"; };
+		509566C92661996200AAA8D0 /* WeatherDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherDebug.entitlements; sourceTree = "<group>"; };
 		5097734826583A580023B210 /* HourlyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyTableViewCell.swift; sourceTree = "<group>"; };
 		5097734B2658629B0023B210 /* HourlyFlowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyFlowModels.swift; sourceTree = "<group>"; };
 		50B2C3162660F827002E5547 /* CustomSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSwitch.swift; sourceTree = "<group>"; };
@@ -437,6 +438,7 @@
 		50E29CC32640066D00066B93 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
+				509566C92661996200AAA8D0 /* WeatherDebug.entitlements */,
 				50DC4AF52641B28D00F2FAE8 /* Application launch */,
 				5094E39E2642B8C000140AD2 /* App navigation */,
 				50DC4AF32641B25000F2FAE8 /* Services */,
@@ -869,6 +871,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Weather/WeatherDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S4VTW7X9U3;
 				INFOPLIST_FILE = Weather/Info.plist;

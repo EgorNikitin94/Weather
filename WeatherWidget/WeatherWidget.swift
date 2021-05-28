@@ -47,20 +47,27 @@ struct WeatherWidgetEntryView : View {
     var body: some View {
         ZStack {
             Color.init(AppColors.sharedInstance.accentBlue)
+            
             Image("Cloud")
                 .resizable()
                 .frame(width: 185, height: 95)
                 .offset(x: 90, y: -45)
+            
             VStack(spacing: 5) {
+                
                 HStack(spacing: 5) {
+                    
                     Image("Cloudy")
                         .resizable()
                         .frame(width: 28, height: 23)
                         .padding(.leading, 12)
+                    
                     Text("19º")
                         .foregroundColor(.white)
                         .font(.custom("Rubik-Regular", size: 30))
+                    
                     Spacer()
+                    
                     Text("Переменная облачность")
                         .foregroundColor(.white)
                         .font(.custom("Rubik-Regular", size: 14))
@@ -68,25 +75,34 @@ struct WeatherWidgetEntryView : View {
                 }.padding(.top)
                 
                 HStack {
+                    
                     Spacer()
+                    
                     Text("Cан-Франциско")
                         .foregroundColor(.white)
                         .font(.custom("Rubik-Regular", size: 14))
                         .padding(.trailing, 15)
                 }
+                
                 Spacer()
+                
                 HStack(spacing: 30) {
+                    
                     ForEach(wethers, id: \.id) { weather in
                         VStack {
+                            
                             Text(weather.day)
                                 .foregroundColor(.white)
                                 .font(.custom("Rubik-Regular", size: 14))
+                            
                             Text("\(weather.precipitation)%")
                                 .foregroundColor(.white)
                                 .font(.custom("Rubik-Regular", size: 12))
+                            
                             Image(weather.image)
                             .resizable()
                             .frame(width: 17, height: 17)
+                            
                             Text("\(weather.minTemp)º/\(weather.maxTemp)º")
                                 .foregroundColor(Color.init(UIColor(red: 0.804, green: 0.767, blue: 0.767, alpha: 1)))
                                 .font(.custom("Rubik-Regular", size: 12))
@@ -126,6 +142,10 @@ struct WeatherWidget: Widget {
         .configurationDisplayName("Weather")
         .description("Weather for current location")
         .supportedFamilies([.systemMedium])
+        ///Не смог разобраться с этим модификатором. В документации не понятно как он работает и другой информации по его работе я не нашел
+//        .onBackgroundURLSessionEvents { (<#String#>, <#@escaping () -> Void#>) in
+//            <#code#>
+//        }
     }
 }
 
