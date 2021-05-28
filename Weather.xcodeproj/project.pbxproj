@@ -40,6 +40,7 @@
 		5094E3CC2643252B00140AD2 /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */; };
 		5097734926583A580023B210 /* HourlyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5097734826583A580023B210 /* HourlyTableViewCell.swift */; };
 		5097734C2658629B0023B210 /* HourlyFlowModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5097734B2658629B0023B210 /* HourlyFlowModels.swift */; };
+		50B2C3172660F827002E5547 /* CustomSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B2C3162660F827002E5547 /* CustomSwitch.swift */; };
 		50C4565126519DA20094D8B1 /* FlowFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C4565026519DA20094D8B1 /* FlowFactory.swift */; };
 		50CAE68C265BE4E6009774DC /* RealmModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAE68B265BE4E6009774DC /* RealmModels.swift */; };
 		50CAE68F265BFBF9009774DC /* RealmDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAE68E265BFBF9009774DC /* RealmDataManager.swift */; };
@@ -94,6 +95,7 @@
 		5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Medium.ttf"; sourceTree = "<group>"; };
 		5097734826583A580023B210 /* HourlyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyTableViewCell.swift; sourceTree = "<group>"; };
 		5097734B2658629B0023B210 /* HourlyFlowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyFlowModels.swift; sourceTree = "<group>"; };
+		50B2C3162660F827002E5547 /* CustomSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSwitch.swift; sourceTree = "<group>"; };
 		50C4565026519DA20094D8B1 /* FlowFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowFactory.swift; sourceTree = "<group>"; };
 		50CAE68B265BE4E6009774DC /* RealmModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModels.swift; sourceTree = "<group>"; };
 		50CAE68E265BFBF9009774DC /* RealmDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDataManager.swift; sourceTree = "<group>"; };
@@ -240,21 +242,30 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		50CAE689265BE0FF009774DC /* Realm data manager */ = {
+		50B2C31926611401002E5547 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				5055E3272653179900E48660 /* CustomPageControl.swift */,
+				50B2C3162660F827002E5547 /* CustomSwitch.swift */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		50CAE689265BE0FF009774DC /* RealmDataManager */ = {
 			isa = PBXGroup;
 			children = (
 				50CAE68B265BE4E6009774DC /* RealmModels.swift */,
 				50CAE68E265BFBF9009774DC /* RealmDataManager.swift */,
 			);
-			path = "Realm data manager";
+			path = RealmDataManager;
 			sourceTree = "<group>";
 		};
-		50DC4AEE2641B1A500F2FAE8 /* Location manager */ = {
+		50DC4AEE2641B1A500F2FAE8 /* LocationManager */ = {
 			isa = PBXGroup;
 			children = (
 				50DC4AEB264188F400F2FAE8 /* LocationManager.swift */,
 			);
-			path = "Location manager";
+			path = LocationManager;
 			sourceTree = "<group>";
 		};
 		50DC4AEF2641B1BE00F2FAE8 /* NetworkService */ = {
@@ -270,26 +281,26 @@
 			children = (
 				5094E3B72642C14600140AD2 /* Keys */,
 				50E29CE9264040E000066B93 /* Fonts */,
-				50DC4AF22641B23800F2FAE8 /* App colors */,
+				50DC4AF22641B23800F2FAE8 /* AppColors */,
 				50E29CD02640067400066B93 /* Assets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		50DC4AF22641B23800F2FAE8 /* App colors */ = {
+		50DC4AF22641B23800F2FAE8 /* AppColors */ = {
 			isa = PBXGroup;
 			children = (
 				50E29CDF264010D000066B93 /* AppColors.swift */,
 			);
-			path = "App colors";
+			path = AppColors;
 			sourceTree = "<group>";
 		};
 		50DC4AF32641B25000F2FAE8 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				50DC4AEF2641B1BE00F2FAE8 /* NetworkService */,
-				50CAE689265BE0FF009774DC /* Realm data manager */,
-				50DC4AEE2641B1A500F2FAE8 /* Location manager */,
+				50CAE689265BE0FF009774DC /* RealmDataManager */,
+				50DC4AEE2641B1A500F2FAE8 /* LocationManager */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -335,7 +346,7 @@
 				50EE20F1265FF29E002F7B77 /* MenuView.swift */,
 				50FA41CB26481F590073026A /* MainWeatherInformationView.swift */,
 				5059ECC42657EDD600C4E874 /* CollectionViewCells */,
-				5055E3272653179900E48660 /* CustomPageControl.swift */,
+				50B2C31926611401002E5547 /* CustomViews */,
 			);
 			path = MainScreenFlow;
 			sourceTree = "<group>";
@@ -514,6 +525,7 @@
 				505047432654551700447386 /* DailyWeatherViewModel.swift in Sources */,
 				507915CA264A947300DBD9C2 /* WeatherMainViewModel.swift in Sources */,
 				5094E3A62642BB5B00140AD2 /* UserDefaultsKeys.swift in Sources */,
+				50B2C3172660F827002E5547 /* CustomSwitch.swift in Sources */,
 				50E29CE0264010D000066B93 /* AppColors.swift in Sources */,
 				5079C2D9264FF3D700BD1AD2 /* City.swift in Sources */,
 				5097734C2658629B0023B210 /* HourlyFlowModels.swift in Sources */,

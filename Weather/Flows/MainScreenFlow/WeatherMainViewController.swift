@@ -14,6 +14,7 @@ enum MainWeatherControllerState {
 }
 
 final class WeatherMainViewController: UIViewController {
+    
     //MARK: - Properties
 
     var coordinator: WeatherMainCoordinator?
@@ -51,7 +52,6 @@ final class WeatherMainViewController: UIViewController {
         $0.alpha = 0
         $0.isHidden = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(blurViewTapped))
-        $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(tapGestureRecognizer)
         return $0
     }(UIView())
@@ -208,6 +208,7 @@ final class WeatherMainViewController: UIViewController {
         updateWeatherData()
         getWeatherData()
         getCityName()
+        onEditTapped()
     }
 
     //MARK: - Methods
@@ -246,12 +247,13 @@ final class WeatherMainViewController: UIViewController {
         mainWeatherInformationView.viewConfigure = viewModelOutput.configureMainInformationView()
         hourlyForecastCollectionView.reloadData()
         dailyForecastCollectionView.reloadData()
-        
+        menuView.configureMenu = viewModelOutput.configureMenuView()
     }
     
     private func checkTracingSettingsChanges() {
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue)
-            && UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue) {
+            && UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingSettingsChanged.rawValue)
+            && !RealmDataManager.sharedInstance.isRealmContainsCurrentLocationCachedWeather() {
             /// insert viewController to ordered and data in realm
             let newViewController = FlowFactory.makeWeatherMainViewController(coordinator: self.coordinator, stateViewController: .currentLocationWeather, pageViewController: self.weatherPageViewController)
             self.weatherPageViewController?.insertLocationWeatherMainViewController(weatherMainViewController: newViewController)
@@ -299,6 +301,12 @@ final class WeatherMainViewController: UIViewController {
     }
 
     //MARK: - Actions
+    
+    private func onEditTapped() {
+        menuView.onEditTapped = {
+            self.coordinator?.pushSettingsViewController()
+        }
+    }
 
     @objc func didChangePageControlValue() {
         weatherPageViewController?.scrollToViewController(index: pageControl.currentPage)

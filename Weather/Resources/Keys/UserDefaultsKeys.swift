@@ -13,4 +13,5 @@ enum UserDefaultsKeys: String {
     case isMiChosenBoolKey
     case is12TimeFormalChosenBoolKey
     case isNotifyBoolKey
+    case isDailyShowBoolKey
 }

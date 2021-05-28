@@ -13,6 +13,7 @@ protocol WeatherMainViewModelOutput {
     var onCityLoaded: ((Bool, String?)->Void)? { get set }
     var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
     var onLoadNewCityWeather: ((String)->Void)? {get set}
+    func configureMenuView() -> (cityName: NSMutableAttributedString, isOnNotifications: Bool, isDailyShow: Bool, temperatureUnit: NSMutableAttributedString, windSpeedUnit: NSMutableAttributedString, visibilityUnit: NSMutableAttributedString, timeFormat: NSMutableAttributedString)
     func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
     func configureHourlyItem(with object: CachedHourly) -> (time: String, image: UIImage?, temperature: String)?
     func configureDailyItem(with object: CachedDaily) -> (dayDate: String, image: UIImage?, humidity: String, descriptionWeather: String, temperature: String)?
@@ -41,6 +42,39 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     var cachedWeather: CachedWeather?
     
     //MARK: - Configure Methods
+    
+    public func configureMenuView() -> (cityName: NSMutableAttributedString, isOnNotifications: Bool, isDailyShow: Bool, temperatureUnit: NSMutableAttributedString, windSpeedUnit: NSMutableAttributedString, visibilityUnit: NSMutableAttributedString, timeFormat: NSMutableAttributedString) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.15
+        var currentLocationCityNameString = ""
+        if let currentLocationCityFullNameUnwrapped = RealmDataManager.sharedInstance.getCurrentLocationCachedWeather()?.city?.fullName {
+            if let lastIndex = currentLocationCityFullNameUnwrapped.lastIndex(of: ",") {
+                currentLocationCityNameString = String(currentLocationCityFullNameUnwrapped[..<lastIndex])  // "www.stackoverflow"
+            }
+        } else {
+            currentLocationCityNameString = "Не выбранно"
+        }
+        let currentLocationCityName = NSMutableAttributedString(string: currentLocationCityNameString, attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+        let isOnNotifications = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isNotifyBoolKey.rawValue) ? true : false
+        
+        let isDailyShow = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isDailyShowBoolKey.rawValue) ? true : false
+        
+        let temperatureText = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isCelsiusChosenBoolKey.rawValue) ? "C" : "F"
+        let temperatureUnit = NSMutableAttributedString(string: temperatureText, attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+        let windText = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isMiChosenBoolKey.rawValue) ? "mile\\s" : "m\\s"
+        let windSpeedUnit = NSMutableAttributedString(string: windText, attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+        let visibilityText = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isMiChosenBoolKey.rawValue) ? "Mile" : "Km"
+        let visibilityUnit = NSMutableAttributedString(string: visibilityText, attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+        let timeText = UserDefaults.standard.bool(forKey: UserDefaultsKeys.is12TimeFormalChosenBoolKey.rawValue) ? "12 часов" : "24 часа"
+        let timeFormat = NSMutableAttributedString(string: timeText, attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        
+        return (currentLocationCityName, isOnNotifications, isDailyShow, temperatureUnit, windSpeedUnit, visibilityUnit, timeFormat)
+        
+    }
     
     public func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)? {
         guard let object = cachedWeather else {
