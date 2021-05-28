@@ -355,7 +355,6 @@ final class WeatherMainViewController: UIViewController {
     }
     
     @objc private func openSettings() {
-        //coordinator?.pushSettingsViewController()
         menuView.isHidden = false
         blurView.isHidden = false
         UIView.animate(withDuration: 0.5) {
