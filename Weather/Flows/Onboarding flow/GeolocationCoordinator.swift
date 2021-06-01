@@ -11,7 +11,7 @@ final class GeolocationCoordinator: Coordinator {
     
     //MARK: - Properties
     
-    unowned var parentCoordinator: Coordinator
+    weak var parentCoordinator: Coordinator?
     
     private let viewControllerState: GeolocationViewControllerState
     
@@ -62,7 +62,7 @@ final class GeolocationCoordinator: Coordinator {
     }
     
     func didFinishGeolocation() {
-        parentCoordinator.childDidFinish(self)
+        parentCoordinator?.childDidFinish(self)
     }
     
     func childDidFinish(_ child: Coordinator?) {
