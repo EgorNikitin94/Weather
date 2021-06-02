@@ -11,7 +11,7 @@ protocol WeatherMainViewModelOutput {
     var cachedWeather: CachedWeather? { get }
     var onWeatherLoaded: ((Bool)->Void)? { get set }
     var onCityLoaded: ((Bool, String?)->Void)? { get set }
-    var onLoadData: ((MainWeatherControllerState)->Void)? {get set}
+    var onLoadData: ((MainWeatherControllerState, Int)->Void)? {get set}
     var onLoadNewCityWeather: ((String)->Void)? {get set}
     func configureMenuView() -> (cityName: NSMutableAttributedString, isOnNotifications: Bool, isDailyShow: Bool, temperatureUnit: NSMutableAttributedString, windSpeedUnit: NSMutableAttributedString, visibilityUnit: NSMutableAttributedString, timeFormat: NSMutableAttributedString)
     func configureMainInformationView() -> (dailyTemperature: String, currentTemperature: String, descriptionWeather: String, cloudy: String, windSpeed: String, humidity: String, sunrise: String, sunset: String, currentDate: String)?
@@ -31,7 +31,10 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
     
     var onCityLoaded: ((Bool, String?) -> Void)?
     
-    lazy var onLoadData: ((MainWeatherControllerState) -> Void)? = { [weak self] state in
+    private var viewControllerIndex: Int?
+    
+    lazy var onLoadData: ((MainWeatherControllerState, Int) -> Void)? = { [weak self] state, index in
+        self?.viewControllerIndex = index
         self?.loadCityAndWeatherData(stateVC: state)
     }
     
@@ -241,9 +244,49 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
                 self?.chooseActionForRealm(weatherData: newWeatherData)
                 self?.onWeatherLoaded?(true)
                 self?.onCityLoaded?(true, city.fullName)
+                self?.makeWeatherWidgetJSON(weather: newWeatherData)
             } else {
                 self?.onCityLoaded?(false, city?.fullName)
             }
+        }
+    }
+    
+    private func makeWeatherWidgetJSON(weather: WeatherData) {
+        var dailyWeatherWidgetArray = [DailyWeatherWidget]()
+        for (index, dayWeather) in weather.daily.enumerated() {
+            if index >= 1 && index <= 5 {
+                let localData = TimeInterval(weather.timezoneOffset - weather.moscowTimeOffset)
+                let date = NSDate(timeIntervalSince1970: TimeInterval(dayWeather.dt) + localData)
+                let formatter = DateFormatter()
+                formatter.locale = Locale(identifier: "ru_RU")
+                formatter.dateFormat = "E"
+                let dayDate = formatter.string(from: date as Date).lowercased()
+                let dailyWeatherWidget = DailyWeatherWidget(date: dayDate, precipitation: Int(dayWeather.pop * 100), weatherMain: dayWeather.weather.first?.main ?? "", minTemperature: Int(dayWeather.temp.min), maxTemperature: Int(dayWeather.temp.max))
+                dailyWeatherWidgetArray.append(dailyWeatherWidget)
+            }
+        }
+        
+        var cityName = ""
+        if let currentLocationCityFullNameUnwrapped = weather.city?.fullName {
+            if let lastIndex = currentLocationCityFullNameUnwrapped.lastIndex(of: ",") {
+                cityName = String(currentLocationCityFullNameUnwrapped[..<lastIndex])
+            }
+        }
+        let weatherForWidget = WeatherWidgetData(date: Date(),
+                                                 currentWeatherTemperature: Int(weather.current.temp),
+                                                 currentWeatherDescription: weather.current.weather.first?.weatherDescription.uppercasedFirstLetter() ?? "",
+                                                 cityName: cityName,
+                                                 mainWeather: weather.current.weather.first?.main ?? "",
+                                                 dailyWeather: dailyWeatherWidgetArray)
+        let encoder = JSONEncoder()
+        
+        do {
+            let dataToSave = try encoder.encode(weatherForWidget)
+            (UserDefaults(suiteName: "group.WeatherApp.Contents"))?.setValue(dataToSave, forKey: "WeatherForWidget")
+            weatherForWidget.reloadWidget()
+        } catch {
+            print("Error: Can't write contents")
+            return
         }
     }
     
@@ -259,10 +302,13 @@ final class WeatherMainViewModel: WeatherMainViewModelOutput {
         NetworkService.getWeatherData(locationCoordinate: locationCoordinate) { [weak self] (weatherData) in
             if var weatherData = weatherData {
                 weatherData.city = city
-                guard let newCachedWeather = RealmDataManager.sharedInstance.getNewCachedWeather(weatherData) else {return} //, let cachedWeather = self?.cachedWeather
+                guard let newCachedWeather = RealmDataManager.sharedInstance.getNewCachedWeather(weatherData) else {return}
                 self?.cachedWeather = newCachedWeather
                 RealmDataManager.sharedInstance.updateCachedWeather(weatherData)
                 self?.onWeatherLoaded?(true)
+                if self?.viewControllerIndex == 0 && !UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTrackingBoolKey.rawValue) {
+                    self?.makeWeatherWidgetJSON(weather: weatherData)
+                }
             } else {
                 self?.onWeatherLoaded?(false)
             }

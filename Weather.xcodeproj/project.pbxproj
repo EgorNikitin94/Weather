@@ -51,6 +51,8 @@
 		50B2C33826613A08002E5547 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E29CDF264010D000066B93 /* AppColors.swift */; };
 		50B2C34526614650002E5547 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50E29CEA2640411500066B93 /* Rubik-Regular.ttf */; };
 		50B2C34826614654002E5547 /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094E3CB2643252A00140AD2 /* Rubik-Medium.ttf */; };
+		50BA2F3D2666668100409D6C /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA2F3C2666668100409D6C /* Weather.swift */; };
+		50BA2F40266666D200409D6C /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA2F3C2666668100409D6C /* Weather.swift */; };
 		50C4565126519DA20094D8B1 /* FlowFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C4565026519DA20094D8B1 /* FlowFactory.swift */; };
 		50CAE68C265BE4E6009774DC /* RealmModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAE68B265BE4E6009774DC /* RealmModels.swift */; };
 		50CAE68F265BFBF9009774DC /* RealmDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CAE68E265BFBF9009774DC /* RealmDataManager.swift */; };
@@ -138,6 +140,8 @@
 		50B2C32926611836002E5547 /* WeatherWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = WeatherWidget.intentdefinition; sourceTree = "<group>"; };
 		50B2C32A26611842002E5547 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		50B2C32C26611842002E5547 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		50BA2F3C2666668100409D6C /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		50BA2F45266678A900409D6C /* WeatherWidgetExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherWidgetExtensionDebug.entitlements; sourceTree = "<group>"; };
 		50C4565026519DA20094D8B1 /* FlowFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowFactory.swift; sourceTree = "<group>"; };
 		50CAE68B265BE4E6009774DC /* RealmModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModels.swift; sourceTree = "<group>"; };
 		50CAE68E265BFBF9009774DC /* RealmDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDataManager.swift; sourceTree = "<group>"; };
@@ -307,6 +311,8 @@
 		50B2C32626611836002E5547 /* WeatherWidget */ = {
 			isa = PBXGroup;
 			children = (
+				50BA2F45266678A900409D6C /* WeatherWidgetExtensionDebug.entitlements */,
+				50BA2F3C2666668100409D6C /* Weather.swift */,
 				50B2C32726611836002E5547 /* WeatherWidget.swift */,
 				50B2C32926611836002E5547 /* WeatherWidget.intentdefinition */,
 				50B2C32A26611842002E5547 /* Assets.xcassets */,
@@ -621,6 +627,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50BA2F40266666D200409D6C /* Weather.swift in Sources */,
 				50B2C33826613A08002E5547 /* AppColors.swift in Sources */,
 				50B2C32826611836002E5547 /* WeatherWidget.swift in Sources */,
 				50B2C32D26611842002E5547 /* WeatherWidget.intentdefinition in Sources */,
@@ -665,6 +672,7 @@
 				5094E3BB2642CAAA00140AD2 /* UIButtonExtension.swift in Sources */,
 				5094E3BF2642E5C400140AD2 /* UIImageExtension.swift in Sources */,
 				507915D1264AAF9F00DBD9C2 /* WeatherData.swift in Sources */,
+				50BA2F3D2666668100409D6C /* Weather.swift in Sources */,
 				5078996F26496A9C00C59F94 /* ApiKeys.swift in Sources */,
 				50FA41CC26481F590073026A /* MainWeatherInformationView.swift in Sources */,
 				5094E3AE2642BCB200140AD2 /* WeatherMainCoordinator.swift in Sources */,
@@ -709,6 +717,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WeatherWidgetExtensionDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S4VTW7X9U3;
 				INFOPLIST_FILE = WeatherWidget/Info.plist;

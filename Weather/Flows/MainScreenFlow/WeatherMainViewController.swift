@@ -201,7 +201,7 @@ final class WeatherMainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModelOutput.onLoadData?(stateViewController)
+        viewModelOutput.onLoadData?(stateViewController, currentPage ?? 0)
         view.backgroundColor = .white
         setupNavigationBar()
         setupLayout()

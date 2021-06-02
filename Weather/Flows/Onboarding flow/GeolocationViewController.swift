@@ -105,7 +105,6 @@ final class GeolocationViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        /// always get fatal error from here
         coordinator?.didFinishGeolocation()
     }
     
